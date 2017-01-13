@@ -1,6 +1,6 @@
 package org.tzi.rtl.gui.views.diagrams.tgg.tggdiagram;
 
-import org.tzi.use.gui.util.PersistHelper;
+import org.tzi.rtl.gui.util.PersistHelper;
 import org.tzi.use.uml.sys.MObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

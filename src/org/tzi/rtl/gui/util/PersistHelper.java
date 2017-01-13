@@ -38,15 +38,11 @@ import org.w3c.dom.NodeList;
  * Copy of USE 3.0.6's PersistHelper. Provides easy to use XML methods
  * @author Lars Hamann
  */
-public class PersistHelper extends org.tzi.use.gui.util.PersistHelper {
+public class PersistHelper {
 	
-	public PersistHelper(Path fileToRead, PrintWriter log) {
-		super(fileToRead, log);
-	}
-
 	XPathFactory factory = XPathFactory.newInstance();
 	
-	
+	public PersistHelper() { }
 	
 	/**
 	 * Appends a child element to <code>parent</code> with the
@@ -100,3 +96,4 @@ public class PersistHelper extends org.tzi.use.gui.util.PersistHelper {
 		}
 	}
 }
+

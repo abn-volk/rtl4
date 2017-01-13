@@ -2,6 +2,8 @@ package org.tzi.rtl.gui.plugins.tgg;
 
 
 
+import javax.swing.JOptionPane;
+
 import org.tzi.rtl.tgg.manager.RTLRuleTree;
 import org.tzi.rtl.tgg.mm.TggRuleCollection;
 import org.tzi.use.gui.main.MainWindow;
@@ -29,4 +31,12 @@ public class Rules {
 	public static void setMainWindow(MainWindow fParent) {
 		fMainWindow = fParent;
 	}
+	
+	public static void showRules (MainWindow fParent) {
+		if (fTggRules.getTggRules().size() == 0)
+			JOptionPane.showMessageDialog(fParent, "No rules available.");
+		else
+			RTLRuleTree.createAndShowGUI(fTggRules, fParent);
+	}
+	
 }

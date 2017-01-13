@@ -116,15 +116,16 @@ public class RTLRuleTree extends JPanel implements TreeSelectionListener {
 			TggDiagramView tggView = new TggDiagramView(mainWindow, tggRule);
     		tggView.setVisible(true);
     		ViewFrame f = new ViewFrame("Triple rule [" + tggRule.name() + "]", tggView,
-    				"Tgg.gif" );
-    		try {
-				URL url = new URL("jar:" + Options.pluginDir + File.pathSeparator + "RTL.jar!/resources/Tgg.gif");
+    				"rtl.png" );
+//    		try {
+//				URL url = new URL("jar:" + Options.pluginDir + File.pathSeparator + "RTL.jar!/resources/rtl.png");
+    			URL url = getClass().getResource("/resources/rtl.png");
 				ImageIcon icon = new ImageIcon(url);
 				f.setFrameIcon(icon);
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+//			} catch (MalformedURLException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
     		
     		JComponent c = (JComponent) f.getContentPane();
     		c.setLayout(new BorderLayout());

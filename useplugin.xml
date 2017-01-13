@@ -52,5 +52,8 @@
 			toolbaritem="Previous match"
 			id="org.tzi.rtl.gui.plugins.tgg.ActionPreviousMatchForward">
 		</action>
+		<action label="Show rule list" icon="resources/list.png" class="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList" tooltip="Show rule list" menu="RestrictedGraphTrafo Plugin" menuitem="Show rule list"
+			toolbaritem="Show rule list" id="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList">
+		</action>
 	</actions>
 </plugin>

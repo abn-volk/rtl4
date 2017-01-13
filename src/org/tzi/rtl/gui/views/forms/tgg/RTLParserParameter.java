@@ -110,7 +110,7 @@ public class RTLParserParameter extends JDialog {
 					fChooser = new JFileChooser(path);
 					ExtFileFilter filter = new ExtFileFilter("use",
 							"USE specifications");
-					fChooser.addChoosableFileFilter(filter);
+					fChooser.setFileFilter(filter);
 					fChooser.setDialogTitle("Open specification");
 				}
 				int returnVal = fChooser
@@ -138,7 +138,7 @@ public class RTLParserParameter extends JDialog {
 					fChooser = new JFileChooser(path);
 					ExtFileFilter filter = new ExtFileFilter("use",
 							"USE specifications");
-					fChooser.addChoosableFileFilter(filter);
+					fChooser.setFileFilter(filter);
 					fChooser.setDialogTitle("Open specification");
 				}
 				int returnVal = fChooser
@@ -165,7 +165,7 @@ public class RTLParserParameter extends JDialog {
 					path = Options.getLastDirectory().toString();
 					fChooser = new JFileChooser(path);
 					ExtFileFilter filter = new ExtFileFilter("tgg", "TGG Rules");
-					fChooser.addChoosableFileFilter(filter);
+					fChooser.setFileFilter(filter);
 					fChooser.setDialogTitle("TGG rules");
 				}
 				int returnVal = fChooser

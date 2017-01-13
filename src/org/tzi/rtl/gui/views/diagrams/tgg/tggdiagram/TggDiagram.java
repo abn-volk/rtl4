@@ -489,28 +489,28 @@ public class TggDiagram extends DiagramView {
 			MObject targetObject = fParent.getTggRule().getSystemState_RHS().system().state().objectByName(targetObjectName);
 
 			// Could be deleted
-			if (assoc != null && sourceObject != null && targetObject != null) {
-				MLink link;
-
-				if (assoc.hasQualifiedEnds()) {
-					String linkValue = helper.getElementStringValue(edgeElement, "linkValue");
-					link = getLinkByValue(assoc, Arrays.asList(sourceObject, targetObject), linkValue);
-				} else {
-					// No qualifier values are present. 
-					link = fParent
-							.getTggRule().getSystemState_RHS()
-							.system()
-							.state()
-							.linkBetweenObjects(assoc,
-									Arrays.asList(sourceObject, targetObject),
-									Collections.<List<Value>>emptyList());
-				}
-
-				if (link != null) {
-					BinaryAssociationOrLinkEdge edge = tggDiagramData.fBinaryLinkToEdgeMap.get(link);
-					edge.restorePlacementInfo(helper, edgeElement, version);
-				}
-			}
+//			if (assoc != null && sourceObject != null && targetObject != null) {
+//				MLink link;
+//
+//				if (assoc.hasQualifiedEnds()) {
+//					String linkValue = helper.getElementStringValue(edgeElement, "linkValue");
+//					link = getLinkByValue(assoc, Arrays.asList(sourceObject, targetObject), linkValue);
+//				} else {
+//					// No qualifier values are present. 
+//					link = fParent
+//							.getTggRule().getSystemState_RHS()
+//							.system()
+//							.state()
+//							.linkBetweenObjects(assoc,
+//									Arrays.asList(sourceObject, targetObject),
+//									Collections.<List<Value>>emptyList());
+//				}
+//
+//				if (link != null) {
+//					BinaryAssociationOrLinkEdge edge = tggDiagramData.fBinaryLinkToEdgeMap.get(link);
+//					edge.restorePlacementInfo(helper, edgeElement, version);
+//				}
+//			}
 		}
 		
 		// restore Swimlane

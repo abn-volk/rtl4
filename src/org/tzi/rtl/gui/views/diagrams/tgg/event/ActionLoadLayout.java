@@ -54,7 +54,6 @@ public class ActionLoadLayout extends AbstractAction {
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramView fDiagram;
-    private PrintWriter fLog;
     
     private File lastFile = null;
     
@@ -65,7 +64,7 @@ public class ActionLoadLayout extends AbstractAction {
         super("Load layout...");
         fTitle = title;
         fAppendix = appendix;
-        fLog = log;
+        
         fDiagram = diagram;
     }
 
@@ -77,7 +76,6 @@ public class ActionLoadLayout extends AbstractAction {
         fTitle = title;
         fAppendix = appendix;
         fDiagram = diagram;
-        fLog = log;
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -129,7 +127,7 @@ public class ActionLoadLayout extends AbstractAction {
 		if (rootElement.hasAttribute("version"))
 			version = Integer.valueOf(rootElement.getAttribute("version"));
 		
-		PersistHelper helper = new PersistHelper(lastFile.toPath(), fLog);
+		PersistHelper helper = new PersistHelper();
 		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
 		fDiagram.getOptions().loadOptions(helper, layoutElement, version);
 		

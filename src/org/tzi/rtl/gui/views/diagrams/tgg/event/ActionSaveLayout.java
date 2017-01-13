@@ -129,7 +129,7 @@ public class ActionSaveLayout extends AbstractAction {
 			return;
 		}
        		
-		PersistHelper helper = new PersistHelper(lastFile.toPath(), fDiagram.getLog());
+		PersistHelper helper = new PersistHelper();
 		Element rootElement = doc.createElement("diagram_Layout");
 		rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
 		doc.appendChild(rootElement);
