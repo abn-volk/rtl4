@@ -150,7 +150,7 @@ public class RTLRuleTree extends JPanel implements TreeSelectionListener {
 	 * this method should be invoked from the
 	 * event dispatch thread.
 	 */
-	public static void createAndShowGUI(TggRuleCollection tggRules, MainWindow mainWindow) {
+	public static JFrame createAndShowGUI(TggRuleCollection tggRules, MainWindow mainWindow) {
 		if (useSystemLookAndFeel) {
 			try {
 				UIManager.setLookAndFeel(
@@ -170,6 +170,8 @@ public class RTLRuleTree extends JPanel implements TreeSelectionListener {
 		//Display the window.
 		frame.pack();
 		frame.setVisible(true);
+		
+		return frame;
 	}
 	
 	private String readHTMLFile(MTggRule tggRule){

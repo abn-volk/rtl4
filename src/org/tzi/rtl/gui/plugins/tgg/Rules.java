@@ -2,6 +2,7 @@ package org.tzi.rtl.gui.plugins.tgg;
 
 
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.tzi.rtl.tgg.manager.RTLRuleTree;
@@ -11,6 +12,7 @@ import org.tzi.use.gui.main.MainWindow;
 public class Rules {
 	private static TggRuleCollection fTggRules = new TggRuleCollection();
     private static MainWindow fMainWindow = null;
+    private static JFrame fRuleFrame = null;
     
     public static TggRuleCollection getTggRuleCollection() { return fTggRules; }
     
@@ -23,7 +25,7 @@ public class Rules {
         fTggRules = rules;
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				RTLRuleTree.createAndShowGUI(fTggRules, fMainWindow);
+				fRuleFrame = RTLRuleTree.createAndShowGUI(fTggRules, fMainWindow);
 			}
 		});
     }
@@ -35,8 +37,13 @@ public class Rules {
 	public static void showRules (MainWindow fParent) {
 		if (fTggRules.getTggRules().size() == 0)
 			JOptionPane.showMessageDialog(fParent, "No rules available.");
-		else
-			RTLRuleTree.createAndShowGUI(fTggRules, fParent);
+		else {
+			if (fRuleFrame == null)
+				fRuleFrame = RTLRuleTree.createAndShowGUI(fTggRules, fParent);
+			else {
+				fRuleFrame.setVisible(true);
+			}
+		}
 	}
 	
 }

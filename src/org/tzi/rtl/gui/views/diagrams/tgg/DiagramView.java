@@ -155,10 +155,11 @@ public abstract class DiagramView extends JPanel
         g.fillRect(0, 0, d.width, d.height);
  
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.black);
-        if(fTggSwimlane.getSource_Border() != null){
+        g2d.setColor(Color.gray);
+        if(fTggSwimlane.getSource_Border() != null){	
         	g2d.draw(fTggSwimlane.getSource_Border());
         }
+        g2d.setStroke(new BasicStroke(2.0f));
         g2d.draw(fTggSwimlane.getSource_Corr());
         g2d.draw(fTggSwimlane.getTarget_Corr());
         g2d.draw(fTggSwimlane.getTarget_Border());
@@ -170,7 +171,8 @@ public abstract class DiagramView extends JPanel
         if(fTggSwimlane.getBottomLine() != null){
         	g2d.draw(fTggSwimlane.getBottomLine());
         }
-        
+        g2d.setStroke(new BasicStroke());
+        g2d.setColor(Color.black);
         if (this.fOpt.showGrid()) {
         	drawGrid(g2d);
         }

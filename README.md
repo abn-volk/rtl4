@@ -8,7 +8,7 @@ The imported project depends on a project named `use-4.2.0` in the same workspac
 
 To use the plugin, export the project as a JAR file: Choose *File - Export - JAR File* and select the project's source files. In the *JAR Manifest Specification* step, browse to `META-INF/MANIFEST.MF`. Place the exported JAR file into USE's plugin directory (`lib/plugins`).
 
-A prebuilt binary is available on GitHub in the *Releases* section.
+Prebuilt binaries are available on GitHub under the *Releases* section.
 
 ## How to use
 Demo files are available on **RestrictedGraphTrafo**'s repository (https://github.com/vnu-dse/rtl), under `demo`.
@@ -19,7 +19,7 @@ Demo files are available on **RestrictedGraphTrafo**'s repository (https://githu
 
 * Transformation rules are shown in a new window. Click on a rule to visualise it.
 
-* Create objects using the `.soil/.cmd` files provided with the demos: From the USE command line, type `open */path/to/file*`. Then create the *object diagram* view to visualise the transformations.
+* Create objects using the `.soil/.cmd` files provided with the demos: From the USE command line, type `open /path/to/file`. Then create the *object diagram* view to visualise the transformations.
 
 * The plugin provides these functions:
  * *Next match*: Find the next rule that matches the objects
