@@ -284,6 +284,7 @@ public class RTLParserParameter extends JDialog {
                     }
                 });
                 /* Load TGG rules */
+                Rules.closeRuleWindow();
                 Rules.setMainWindow(fParent);
                 Rules.setRTLRule(fTggRules);
                 Rules.setRTLRuleFileName(fTextTgg.getText());

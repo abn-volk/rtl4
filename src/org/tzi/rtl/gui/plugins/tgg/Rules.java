@@ -2,6 +2,8 @@ package org.tzi.rtl.gui.plugins.tgg;
 
 
 
+import java.awt.event.WindowEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -44,6 +46,11 @@ public class Rules {
 				fRuleFrame.setVisible(true);
 			}
 		}
+	}
+	
+	public static void closeRuleWindow () {
+		if (fRuleFrame != null)
+			fRuleFrame.dispatchEvent(new WindowEvent(fRuleFrame, WindowEvent.WINDOW_CLOSING));
 	}
 	
 }
