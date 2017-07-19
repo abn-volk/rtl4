@@ -249,7 +249,6 @@ public final class DiagramInputHandling implements MouseListener,
 			
 			if( sel instanceof ObjectNode){
 				boolean ok = ( (ObjectNode) sel).checkNewPositition(sel.getX() + dx, sel.getY() + dy);
-            	ok = ok || !( (ObjectNode) sel).checkNewPositition(sel.getX(), sel.getY());
             	if(ok){
             		sel.setPosition(sel.getX() + dx, sel.getY() + dy);                		
             	}

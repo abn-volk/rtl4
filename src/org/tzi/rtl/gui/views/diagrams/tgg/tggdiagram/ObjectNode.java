@@ -181,31 +181,31 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
 		 // -1: SL; -2: CL; -3: TL; (Deleting Object)
 		// x = x - getWidth()/2;
 		// y = y - getHeight()/2;
-		boolean ok = true;
+		boolean ok = false;
 		switch (fGroupId) {
     	case -1: case 1: 
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinSL(x, y);
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinSL(x + getWidth(), y + getHeight());
+    		ok = this.fParent.getTggDiagram().getTggSwimlane().isWithinSL(x, y)
+    			&& this.fParent.getTggDiagram().getTggSwimlane().isWithinSL(x + getWidth(), y + getHeight());
     		break;
     	case -2: case 2: 
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinCL(x, y);
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinCL(x + getWidth(), y + getHeight());
+    		ok = this.fParent.getTggDiagram().getTggSwimlane().isWithinCL(x, y)
+    			&& this.fParent.getTggDiagram().getTggSwimlane().isWithinCL(x + getWidth(), y + getHeight());
     		break;
     	case -3: case 3:
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinTL(x, y);
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinTL(x + getWidth(), y + getHeight());
+    		ok = this.fParent.getTggDiagram().getTggSwimlane().isWithinTL(x, y)
+    			&& this.fParent.getTggDiagram().getTggSwimlane().isWithinTL(x + getWidth(), y + getHeight());
     		break;
     	case 4:
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinSR(x, y);
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinSR(x + getWidth(), y + getHeight());
+    		ok = this.fParent.getTggDiagram().getTggSwimlane().isWithinSR(x, y)
+    			&& this.fParent.getTggDiagram().getTggSwimlane().isWithinSR(x + getWidth(), y + getHeight());
     		break;
     	case 5:
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinCR(x, y);
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinCR(x + getWidth(), y + getHeight());
+    		ok = this.fParent.getTggDiagram().getTggSwimlane().isWithinCR(x, y)
+    			&& this.fParent.getTggDiagram().getTggSwimlane().isWithinCR(x + getWidth(), y + getHeight());
     		break;
     	case 6:
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinTR(x, y);
-    		ok = ok && this.fParent.getTggDiagram().getTggSwimlane().isWithinTR(x + getWidth(), y + getHeight());
+    		ok = this.fParent.getTggDiagram().getTggSwimlane().isWithinTR(x, y)
+    			&& this.fParent.getTggDiagram().getTggSwimlane().isWithinTR(x + getWidth(), y + getHeight());
     		break;
     	default:
     		ok = false;

@@ -43,6 +43,8 @@ import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 
+import org.tzi.rtl.tgg.old.TGGParser;
+
 /**
  * RTL1.1
  * @author Khoa-Hai Nguyen
@@ -258,6 +260,7 @@ public class RTLParserParameter extends JDialog {
 			// gen USE file
 			genUSEContent();
 			writeUSEFile();
+			writeCMDFiles();
 
             /* Load model and RTL rules */
             if (fModel != null) {
@@ -559,6 +562,14 @@ public class RTLParserParameter extends JDialog {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private void writeCMDFiles() {
+		File f = new File(fTextTgg.getText());
+		File f1 = new File(fTextModel1.getText());
+		File f2 = new File(fTextModel2.getText());
+		TGGParser myTGGParser = new TGGParser(f.getParent(), f1.getPath(), f2.getPath(), f.getPath(), fLogWriter);
+		myTGGParser.parserFileInput();
 	}
 
 	/**

@@ -21,9 +21,6 @@
 
 package org.tzi.rtl.gui.util;
 
-import java.io.PrintWriter;
-import java.nio.file.Path;
-
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
