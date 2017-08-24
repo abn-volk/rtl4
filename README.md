@@ -1,5 +1,5 @@
 # rtl4
-This is a port of **rtl** (https://github.com/abn-volk/rtl) to USE 4.2.0 (https://sourceforge.net/projects/useocl/).
+This is a port of **rtl** version 3.0 to USE 4.2.0 (https://sourceforge.net/projects/useocl/).
 
 ## How to build
 The source code is available as an Eclipse project. From Eclipse's main window, go to *File - Import - Existing Projects into Workspace* and browse to the project's root directory.
@@ -13,9 +13,9 @@ Prebuilt binaries are available on GitHub under the *Releases* section.
 ## How to use
 Demo files are available on **RestrictedGraphTrafo**'s repository (https://github.com/vnu-dse/rtl), under `demo`.
 
-* Due to USE 4.2.0's restriction, plugin commands are only enabled after a model has been opened. Open any valid USE model to enable the plugin's commands.
+* Open the source metamodel's USE specification file.
 
-* Click the *Restricted Graph Trafo Parser* button (the RTL icon). Specify the source and target metamodels (`.use` files) and the transformation rules file (`.tgg`).
+* Click the *Restricted Graph Trafo Parser* button (the RTL icon). Specify the target metamodel (`.use` file) and the transformation rules file (`.tgg`).
 
 * Transformation rules are shown in a new window. Click on a rule to visualise it.
 
