@@ -22,6 +22,7 @@ public class ActionParserRTL implements IPluginActionDelegate {
 		Session fSession = pluginAction.getSession();
 		MainWindow fMainWindow = pluginAction.getParent();
 		fParamForm = new RTLParserParameter(fSession, fMainWindow);
+		fParamForm.setResizable(true);
         fParamForm.setVisible(true);
 	}
 

@@ -23,6 +23,7 @@ import org.tzi.rtl.tgg.mm.MTggRule;
 import org.tzi.rtl.tgg.mm.TggRuleCollection;
 import org.tzi.rtl.tgg.parser.RTLKeyword;
 import org.tzi.rtl.tgg.parser.RTLRuleCompiler;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
@@ -52,8 +53,6 @@ import org.tzi.use.uml.sys.MSystemException;
 public class RTLParserParameter extends JDialog {
     private Session fSession;
 	private MainWindow fParent;
-    private ModelBrowser fModelBrowser;
-	private JTextField fTextModel1;
 	private JTextField fTextModel2;
 	private JTextField fTextTgg;
 	private PrintWriter fLogWriter;
@@ -75,15 +74,11 @@ public class RTLParserParameter extends JDialog {
 		});
 
 		fParent = parent;
-        fModelBrowser = fParent.getModelBrowser();
 		fLogWriter = parent.logWriter();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-		// create object name field and label
-		fTextModel1 = new JTextField(35);
-		JLabel labelModel1 = new JLabel("Source metamodel:");
-		labelModel1.setDisplayedMnemonic('O');
-		labelModel1.setLabelFor(fTextModel1);
+		
+		// Label for source metamodel, which is already loaded
+		JLabel labelModel1 = new JLabel("Source metamodel: " + Options.getRecentFile("use").getFileName());
 
 		// create object name field and label
 		fTextModel2 = new JTextField(35);
@@ -97,35 +92,7 @@ public class RTLParserParameter extends JDialog {
 		labelTgg.setDisplayedMnemonic('2');
 		labelTgg.setLabelFor(fTextTgg);
 
-		// create buttons
-		JButton btnPath1 = new JButton("...");
-		// btnPath1.setMnemonic('P');
-		btnPath1.addActionListener(new ActionListener() {
-			private JFileChooser fChooser;
-
-			public void actionPerformed(ActionEvent e) {
-				String path;
-				if (fChooser == null) {
-					path = Options.getLastDirectory().toString();
-					fChooser = new JFileChooser(path);
-					ExtFileFilter filter = new ExtFileFilter("use",
-							"USE specifications");
-					fChooser.setFileFilter(filter);
-					fChooser.setDialogTitle("Open specification");
-				}
-				int returnVal = fChooser
-						.showOpenDialog(RTLParserParameter.this);
-				if (returnVal != JFileChooser.APPROVE_OPTION)
-					return;
-
-				path = fChooser.getCurrentDirectory().toString();
-				Options.setLastDirectory(new File(path).toPath());
-
-				fTextModel1.setText(Paths.get(path,
-						fChooser.getSelectedFile().getName()).toString());
-
-			}
-		});
+		
 		JButton btnPath2 = new JButton("...");
 		// btnPath2.setMnemonic('P');
 		btnPath2.addActionListener(new ActionListener() {
@@ -201,37 +168,18 @@ public class RTLParserParameter extends JDialog {
 		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		GridBagHelper gh = new GridBagHelper(contentPane);
-		gh
-				.add(labelModel1, 0, 0, 6, 1, 0.0, 0.0,
-						GridBagConstraints.HORIZONTAL);
-		gh
-				.add(fTextModel1, 0, 1, 6, 1, 0.0, 0.0,
-						GridBagConstraints.HORIZONTAL);
-		gh.add(btnPath1, 7, 1, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
-
-		gh
-				.add(labelModel2, 0, 2, 6, 1, 0.0, 0.0,
-						GridBagConstraints.HORIZONTAL);
-		gh
-				.add(fTextModel2, 0, 3, 6, 1, 0.0, 0.0,
-						GridBagConstraints.HORIZONTAL);
-		gh.add(btnPath2, 7, 3, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
-
-		gh.add(labelTgg, 0, 4, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
-		gh.add(fTextTgg, 0, 5, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
-		gh.add(btnPath3, 7, 5, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
-
-		// gh.add(new JPanel(), 1, 2,
-		// 1, 1, 0.0, 1.0, GridBagConstraints.BOTH);
-
+		gh.add(labelModel1, 0, 0, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+		gh.add(labelModel2, 0, 1, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+		gh.add(fTextModel2, 0, 2, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+		gh.add(btnPath2, 7, 2, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+		gh.add(labelTgg, 0, 3, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+		gh.add(fTextTgg, 0, 4, 6, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+		gh.add(btnPath3, 7, 4, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
 		gh.add(btnParse, 0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
-
 		gh.add(btnClose, 1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
 
 		getRootPane().setDefaultButton(btnParse);
 		pack();
-		setSize(new Dimension(355, 194));
-		setResizable(false);
 		setLocationRelativeTo(parent);
 		// fListClasses.requestFocus();
 
@@ -500,7 +448,7 @@ public class RTLParserParameter extends JDialog {
 		FileInputStream stream;
 		try {
 			String mm1 = "", mm2 = "";
-			File f1 = new File(fTextModel1.getText());
+			File f1 = Options.getRecentFile("use").toFile();
 			stream = new FileInputStream(f1);
 			fModel1 = USECompiler.compileSpecification(stream, f1.getName(),
 					fLogWriter, new ModelFactory());
@@ -588,14 +536,11 @@ public class RTLParserParameter extends JDialog {
 	 * @return
 	 */
 	private boolean checkPath() {
-		File f = new File(fTextModel1.getText());
+		File f = new File(fTextModel2.getText());
 		if (f.exists()) {
-			f = new File(fTextModel2.getText());
-			if (f.exists()) {
-				f = new File(fTextTgg.getText());
-				if (f.exists())
-					return true;
-			}
+			f = new File(fTextTgg.getText());
+			if (f.exists())
+				return true;
 		}
 		return false;
 	}
