@@ -1,5 +1,16 @@
 package org.tzi.rtl.tgg.manager;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.Collection;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -7,42 +18,25 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.UIManager;
-
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
-import org.tzi.use.config.Options;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.rtl.gui.views.diagrams.tgg.tggdiagram.TggDiagramView;
 import org.tzi.rtl.tgg.mm.MTggRule;
 import org.tzi.rtl.tgg.mm.TggRuleCollection;
+import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.util.Log;
-
-import java.util.Collection;
-import java.util.Iterator;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 @SuppressWarnings({"serial", "unchecked"})
 public class RTLRuleTree extends JPanel implements TreeSelectionListener {
 	private JEditorPane htmlPane;
 	private JTree tree;
-	private Collection fTggRules;
+	private Collection<MTggRule> fTggRules;
 	private MainWindow mainWindow;
 
 	//Optionally play with line styles.  Possible values are
@@ -117,15 +111,9 @@ public class RTLRuleTree extends JPanel implements TreeSelectionListener {
     		tggView.setVisible(true);
     		ViewFrame f = new ViewFrame("Triple rule [" + tggRule.name() + "]", tggView,
     				"rtl.png" );
-//    		try {
-//				URL url = new URL("jar:" + Options.pluginDir + File.pathSeparator + "RTL.jar!/resources/rtl.png");
-    			URL url = getClass().getResource("/resources/rtl.png");
-				ImageIcon icon = new ImageIcon(url);
-				f.setFrameIcon(icon);
-//			} catch (MalformedURLException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			URL url = getClass().getResource("/resources/rtl.png");
+			ImageIcon icon = new ImageIcon(url);
+			f.setFrameIcon(icon);
     		
     		JComponent c = (JComponent) f.getContentPane();
     		c.setLayout(new BorderLayout());
@@ -137,9 +125,7 @@ public class RTLRuleTree extends JPanel implements TreeSelectionListener {
 	
 	private void createNodes(DefaultMutableTreeNode top) {
 		DefaultMutableTreeNode rule = null;
-		Iterator it = fTggRules.iterator();
-		while(it.hasNext()){
-			MTggRule tggRule = (MTggRule) it.next();
+		for (MTggRule tggRule : fTggRules) {
 			rule = new DefaultMutableTreeNode(tggRule);
 			top.add(rule);
 		}
@@ -180,38 +166,37 @@ public class RTLRuleTree extends JPanel implements TreeSelectionListener {
         sw.write("<style> <!-- body { font-family: monospace; } --> </style>");
         sw.write("</head><body><font size=\"-1\">");          
         
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(tggRule.htmlFile()));
-            // read from file
+        try (BufferedReader reader = new BufferedReader(new FileReader(tggRule.htmlFile()))) {
+        // read from file
             String readLine = null;                
             do{
-            	try {
-            		readLine = reader.readLine();
-            		//System.out.println(readLine);
-            		if (readLine == null) break;
-            		if (readLine.matches("^\\s*rule\\s*" + tggRule.name() + "\\s*")){                			
-            			while (readLine != null && !readLine.matches("^\\s*}\\s*end\\s*") && !readLine.matches("^\\s*end\\s*")){
-            				readLine = readLine.replace(">", "&gt;");
-            				readLine = readLine.replace("<", "&lt;");
-            				readLine = readLine.replace("rule", "<strong>rule</strong>");
-            				readLine = readLine.replace("checkSource", "<strong>checkSource</strong>");
-            				readLine = readLine.replace("checkTarget", "<strong>checkTarget</strong>");
-            				readLine = readLine.replace("checkCorr", "<strong>checkCorr</strong>");
-            				readLine =readLine.replace(" ", "&nbsp;");
-            				sw.write(readLine + "<br>");
-            				readLine = reader.readLine();
-            			}
-            			readLine = readLine.replace("end", "<strong>end</strong>");
-            			sw.write(readLine);                			
-            			readLine = null;//break
-            		}
-            	} catch (IOException e) {                	
-            		e.printStackTrace();                		
+        		readLine = reader.readLine();
+        		//System.out.println(readLine);
+        		if (readLine == null) break;
+        		if (readLine.matches("^\\s*rule\\s*" + tggRule.name() + "\\s*")){                			
+        			while (readLine != null && !readLine.matches("^\\s*}\\s*end\\s*") && !readLine.matches("^\\s*end\\s*")){
+        				readLine = readLine.replace(">", "&gt;");
+        				readLine = readLine.replace("<", "&lt;");
+        				readLine = readLine.replace("rule", "<strong>rule</strong>");
+        				readLine = readLine.replace("checkSource", "<strong>checkSource</strong>");
+        				readLine = readLine.replace("checkTarget", "<strong>checkTarget</strong>");
+        				readLine = readLine.replace("checkCorr", "<strong>checkCorr</strong>");
+        				readLine =readLine.replace(" ", "&nbsp;");
+        				sw.write(readLine + "<br>");
+        				readLine = reader.readLine();
+        			}
+        			readLine = readLine.replace("end", "<strong>end</strong>");
+        			sw.write(readLine);                			
+        			readLine = null;//break		
             	}
             } while(readLine != null);
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             Log.error("File `" + tggRule.htmlFile() + "' not found.");
-        }           
+        }   
+        catch (IOException e) {                	
+    		e.printStackTrace();       
+        }         
         
         sw.write("</body></html>");
         String spec = sw.toString();            

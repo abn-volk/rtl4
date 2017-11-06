@@ -23,7 +23,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +36,7 @@ import org.tzi.use.uml.ocl.expr.ExpAttrOp;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.UniqueNameGenerator;
@@ -47,7 +47,6 @@ import org.tzi.use.util.UniqueNameGenerator;
  * @version $ProjectVersion: 0.393 $
  * @author hanhdd
  */
-@SuppressWarnings( { "unchecked" })
 public class MRule implements MModelElement {
 	/**
 	 * @uml.property name="fLhs"
@@ -87,53 +86,53 @@ public class MRule implements MModelElement {
 		return fRhs;
 	}
 
-	public List getAllObjects() {
-		List objects = new ArrayList();
-		List lhsObjects = fLhs.getObjects();
-		List rhsObjects = fRhs.getObjects();
+	public List<MObject> getAllObjects() {
+		List<MObject> objects = new ArrayList<>();
+		List<MObject> lhsObjects = fLhs.getObjects();
+		List<MObject> rhsObjects = fRhs.getObjects();
 		objects.addAll(lhsObjects);
 		objects.addAll(rhsObjects);
 		return objects;
 	}
 
-	public List getDeletingObjects() {// MObject
+	public List<MObject> getDeletingObjects() {// MObject
 		if (!fIsDeletingRule) {
-			return new ArrayList();
+			return new ArrayList<>();
 		}
-		List objects = fLhs.getObjects();
-		List rhsObjects = fRhs.getObjects();
+		List<MObject> objects = fLhs.getObjects();
+		List<MObject> rhsObjects = fRhs.getObjects();
 		objects.removeAll(rhsObjects);
 		return objects;
 	}
 
-	public List getNonDeletingObjects() {
-		List objects = fLhs.getObjects();
-		List rhsObjects = fRhs.getObjects();
+	public List<MObject> getNonDeletingObjects() {
+		List<MObject> objects = fLhs.getObjects();
+		List<MObject> rhsObjects = fRhs.getObjects();
 		if (!fIsDeletingRule)
 			return objects;
 		objects.retainAll(rhsObjects);
 		return objects;
 	}
 
-	public List getNewObjects() {
-		List objects = fRhs.getObjects();
-		List lhsObjects = fLhs.getObjects();
+	public List<MObject> getNewObjects() {
+		List<MObject> objects = fRhs.getObjects();
+		List<MObject> lhsObjects = fLhs.getObjects();
 		if (!fIsDeletingRule)
 			return objects;
 		objects.removeAll(lhsObjects);
 		return objects;
 	}
 
-	public List getNewLinks() {
-		List links = fRhs.getLinks();// MLink
+	public List<MLink> getNewLinks() {
+		List<MLink> links = fRhs.getLinks();
 		if (fIsDeletingRule) {
 			links.removeAll(fLhs.getLinks());
 		}
 		return links;
 	}
 
-	public List getNonDeletingLinks() {
-		List links = new ArrayList();
+	public List<MLink> getNonDeletingLinks() {
+		List<MLink> links = new ArrayList<>();
 		if (fIsDeletingRule) {
 			links = fLhs.getLinks();
 			links.retainAll(fRhs.getLinks());
@@ -143,8 +142,8 @@ public class MRule implements MModelElement {
 		return links;
 	}
 
-	public List getDeletingLinks() {
-		List links = new ArrayList();
+	public List<MLink> getDeletingLinks() {
+		List<MLink> links = new ArrayList<>();
 		if (fIsDeletingRule) {
 			links = fLhs.getLinks();
 			links.removeAll(fRhs.getLinks());
@@ -153,7 +152,6 @@ public class MRule implements MModelElement {
 	}
 
 	public String name() {
-		// TODO Auto-generated method stub
 		return fName;
 	}
 
@@ -162,12 +160,11 @@ public class MRule implements MModelElement {
 
 	}
 
-	public List preconditions() {
-		// TODO Auto-generated method stub
+	public List<String> preconditions() {
 		return fLhs.getConditions();
 	}
 
-	public List postconditions() {
+	public List<String> postconditions() {
 		return fRhs.getConditions();
 	}
 
@@ -225,9 +222,7 @@ public class MRule implements MModelElement {
 		String params = "";
 		MSystem fSystem;
 		fSystem = tgg.getMSystemState().system();
-		List conditions = tgg.getConditions();
-		for (Iterator iter = conditions.iterator(); iter.hasNext();) {
-			String cond = (String) iter.next();
+		for (String cond : tgg.getConditions()){
 			StringWriter errorOutput = new StringWriter();
 
 			Expression expr = OCLCompiler.compileExpression(fSystem.model(),
@@ -264,8 +259,7 @@ public class MRule implements MModelElement {
 		String params = "", cond = "";
 		boolean flag = true;
 		// class in left
-		for (Iterator iter = fLhs.getObjects().iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
+		for (MObject obj : fLhs.getObjects()) {
 			if (flag) {
 				params += "Tuple(";
 				flag = false;
@@ -297,16 +291,14 @@ public class MRule implements MModelElement {
 		String params = "";
 		boolean flag = true;
 		// class in left + right
-		for (Iterator iter = fLhs.getObjects().iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
+		for (MObject obj : fLhs.getObjects()) {
 			if (flag) {
 				params += "Tuple(";
 				flag = false;
 			}
 			params += obj.name() + ":" + obj.cls().name() + ",";
 		}
-		for (Iterator iter = fRhs.getObjects().iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
+		for (MObject obj : fRhs.getObjects()) {
 			if (flag) {
 				params += "Tuple(";
 				flag = false;
@@ -367,18 +359,15 @@ public class MRule implements MModelElement {
 		String post = "", ocl = "";
 		// Maintain object in left
 		List<MClass> classes = new ArrayList<MClass>();
-		for (Iterator iter = fLhs.getObjects().iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
+		for (MObject obj : fLhs.getObjects()) {
 			MClass cls = obj.cls();
 			if (!classes.contains(cls))
 				classes.add(cls);
 		}
-		for (Iterator iter = classes.iterator(); iter.hasNext();) {
-			MClass mClass = (MClass) iter.next();
+		for (MClass mClass : classes) {
 			post += "\n" + RTLKeyword.indent(indent) + mClass.name()
 					+ ".allInstances->includesAll(Set{";
-			for (Iterator iter1 = fLhs.getObjects().iterator(); iter1.hasNext();) {
-				MObject mObj = (MObject) iter1.next();
+			for (MObject mObj : fLhs.getObjects()) {
 				if (mObj.cls().name().equals(mClass.name())) {
 					post += mObj.name() + ",";
 				}
@@ -387,8 +376,7 @@ public class MRule implements MModelElement {
 		}
 		// Exist new object in right
 		indentNum = 0;
-		for (Iterator iter = fRhs.getObjects().iterator(); iter.hasNext();) {
-			MObject mObj = (MObject) iter.next();
+		for (MObject mObj : fRhs.getObjects()) { 
 			post += "\n" + RTLKeyword.indent(indent + 2 * indentNum) + "("
 					+ mObj.cls().name() + ".allInstances - "
 					+ mObj.cls().name() + ".allInstances@pre)->exists("

@@ -21,7 +21,6 @@ package org.tzi.rtl.tgg.mm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +33,7 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 
@@ -114,24 +114,24 @@ public class MTggRule implements MModelElement {
 		return fIsDeletingRule;
 	}
 
-	public List getNewLinks() {
-		List links = new ArrayList();
+	public List<MLink> getNewLinks() {
+		List<MLink> links = new ArrayList<MLink>();
 		links.addAll(fSourceRule.getNewLinks());
 		links.addAll(fTargetRule.getNewLinks());
 		links.addAll(fCorrRule.getNewLinks());
 		return links;
 	}
 
-	public List getNonDeletingLinks() {
-		List links = new ArrayList();
+	public List<MLink> getNonDeletingLinks() {
+		List<MLink> links = new ArrayList<>();
 		links.addAll(fSourceRule.getNonDeletingLinks());
 		links.addAll(fTargetRule.getNonDeletingLinks());
 		links.addAll(fCorrRule.getNonDeletingLinks());
 		return links;
 	}
 
-	public List getDeletingLinks() {
-		List links = new ArrayList();
+	public List<MLink> getDeletingLinks() {
+		List<MLink> links = new ArrayList<>();
 		links.addAll(fSourceRule.getDeletingLinks());
 		links.addAll(fTargetRule.getDeletingLinks());
 		links.addAll(fCorrRule.getDeletingLinks());
@@ -139,7 +139,6 @@ public class MTggRule implements MModelElement {
 	}
 
 	public String name() {
-		// TODO Auto-generated method stub
 		return fName;
 	}
 
@@ -153,7 +152,6 @@ public class MTggRule implements MModelElement {
 	}
 
 	public int compareTo(MModelElement o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -502,14 +500,11 @@ public class MTggRule implements MModelElement {
 
 	public String buildVariableForCondition(MOperation operation, int indent) {
 		String ocl = "";
-		for (Iterator iter = operation.paramList().iterator(); iter.hasNext();) {
-			VarDecl mVarDecl = (VarDecl) iter.next();
+		for (VarDecl mVarDecl : operation.paramList()) {
 			ocl += "\n" + RTLKeyword.comment(20, '-');
 			ocl += "\n--" + mVarDecl.toString();
 			TupleType mTupleType = (TupleType) mVarDecl.type();
-			for (Iterator iter1 = mTupleType.getParts().keySet().iterator(); iter1
-					.hasNext();) {
-				String key = (String) iter1.next();
+			for (String key : mTupleType.getParts().keySet()) {
 				Part mPart = mTupleType.getPart(key);
 				ocl += "\n" + RTLKeyword.indent(indent) + "let " + mPart.name()
 						+ ":" + mPart.type().toString() + " = "
@@ -522,10 +517,8 @@ public class MTggRule implements MModelElement {
 
 	public String buildInvariantCondition(int indent, MTggPattern part) {
 		String ocl = "", tmp = "";
-		for (Iterator iter = part.getObjects().iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
-			for (Iterator iter1 = fInvariants.keySet().iterator(); iter1.hasNext();) {
-				String key = (String) iter1.next();
+		for (MObject obj : part.getObjects()) {
+			for (String key : fInvariants.keySet()) {
 				if (key.equals(obj.cls().name())) {
 					tmp = fInvariants.get(key).toString().replace(RTLKeyword.self,
 							obj.name());
@@ -543,10 +536,8 @@ public class MTggRule implements MModelElement {
 	
 	public String oclForUpdateAttributeForward(){
 		String ocl = "";
-		for (Iterator iter = fCorrRule.getRHS().getObjects().iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
-			for (Iterator iter1 = fInvariants.keySet().iterator(); iter1.hasNext();) {
-				String className = (String) iter1.next();
+		for (MObject obj : fCorrRule.getRHS().getObjects()) {
+			for (String className : fInvariants.keySet()) {
 				if (obj.cls().name().equals(className)){
 					String inv = (String)fInvariants.get(className);
 					if (inv.startsWith("["))

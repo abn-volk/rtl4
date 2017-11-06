@@ -2,7 +2,6 @@ package org.tzi.rtl.gui.plugins.tgg;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.rtl.tgg.mm.MTggRule;
@@ -56,7 +55,6 @@ public class ActionFindAllMatchForward  implements IPluginActionDelegate {
         performAction();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void findAllMatch(PrintWriter fLogWriter, Session fSession){
     	fTggRuleCollection = Rules.getTggRuleCollection();
     	MatchingEachPart.setListMatch(null);
@@ -65,8 +63,7 @@ public class ActionFindAllMatchForward  implements IPluginActionDelegate {
     	firstMatch.setfSystemState(fSession.system().state());
 		List<Matching> matches = new ArrayList<Matching>();
     	// find all match with current state
-    	for (Iterator iterator = fTggRuleCollection.getTggRules().iterator(); iterator.hasNext();) {
-    		MTggRule rule = (MTggRule) iterator.next();
+		for (MTggRule rule : fTggRuleCollection.getTggRules()) {
     		matches.addAll(findMatching(firstMatch.getfSystemState(), rule, fSession));
     	}
     	result = matches;

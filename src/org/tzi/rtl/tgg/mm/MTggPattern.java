@@ -26,32 +26,30 @@ public class MTggPattern {
 	 * @uml.associationEnd multiplicity="(0 -1)"
 	 *                     elementType="org.tzi.use.uml.sys.MLink"
 	 */
-	List fObjects; // MObject
+	List<MObject> fObjects; // MObject
 	/**
 	 * @uml.property name="fLinks"
 	 * @uml.associationEnd multiplicity="(0 -1)"
 	 *                     elementType="org.tzi.use.uml.sys.MLink"
 	 */
-	List fLinks; // MLink
+	List<MLink> fLinks; // MLink
 	/**
 	 * @uml.property name="fConditions"
 	 */
-	List fConditions; // String
+	List<String> fConditions; // String
 
 	Map<String, Object> fInvariants;
 
-	public MTggPattern(MSystemState systemState, List objects, List links,
-			List conditions) {
-		// TODO Auto-generated constructor stub
+	public MTggPattern(MSystemState systemState, List<MObject> objects, List<MLink> links,
+			List<String> conditions) {
 		fSystemState = systemState;
 		fObjects = objects;
 		fLinks = links;
 		fConditions = conditions;
 	}
 
-	public MTggPattern(MSystemState systemState, List objects, List links,
-			List conditions, Map<String, Object> invariants) {
-		// TODO Auto-generated constructor stub
+	public MTggPattern(MSystemState systemState, List<MObject> objects, List<MLink> links,
+			List<String> conditions, Map<String, Object> invariants) {
 		fSystemState = systemState;
 		fObjects = objects;
 		fLinks = links;
@@ -63,21 +61,20 @@ public class MTggPattern {
 		return fSystemState;
 	}
 
-	public List getObjects() {
-		List res = new ArrayList();
+	public List<MObject> getObjects() {
+		List<MObject> res = new ArrayList<>();
 		res.addAll(fObjects);
 		return res;
 	}
 
-	public List getLinks() {
-		List res = new ArrayList();
+	public List<MLink> getLinks() {
+		List<MLink> res = new ArrayList<>();
 		res.addAll(fLinks);
 		return res;
 	}
 
-	public List getConditions() {
-		// TODO Auto-generated method stub
-		List res = new ArrayList();
+	public List<String> getConditions() {
+		List<String> res = new ArrayList<>();
 		res.addAll(fConditions);
 		return res;
 	}
@@ -90,8 +87,7 @@ public class MTggPattern {
 
 	public String buildLinkCondition(int indent) {
 		String ocl = "";
-		for (Iterator iter = fLinks.iterator(); iter.hasNext();) {
-			MLink mLink = (MLink) iter.next();
+		for (MLink mLink : fLinks) {
 			MAssociation assoc = mLink.association();
 			MAssociationEnd end1, end2;
 			end1 = assoc.associationEnds().get(0);
@@ -127,8 +123,7 @@ public class MTggPattern {
 
 	public String buildOCLCondition(int indent) {
 		String ocl = "";
-		for (Iterator iter = fConditions.iterator(); iter.hasNext();) {
-			String cond = (String) iter.next();
+		for (String cond : fConditions) {
 			ocl += "\n" + RTLKeyword.indent(indent)
 					+ cond.substring(1, cond.length() - 1) + RTLKeyword.and;
 		}
@@ -140,8 +135,7 @@ public class MTggPattern {
 	public String genOCLForCreateObject(UniqueNameGenerator fUniqueNameGenerator) {
 		String ocl = "";
 		// Objects
-		for (Iterator iter = fObjects.iterator(); iter.hasNext();) {
-			MObject obj = (MObject) iter.next();
+		for (MObject obj : fObjects) {
 			String objNewName = fUniqueNameGenerator.generate("N_" + obj.cls().name());
 			//ocl += "\n assign " + obj.name() + ":= create " + obj.cls().name();
 			ocl += "\n create " + objNewName + ":" + obj.cls().name();
@@ -153,8 +147,7 @@ public class MTggPattern {
 	public String genOCLForCreateLink(UniqueNameGenerator fUniqueNameGenerator) {
 		String ocl = "";
 		// Links
-		for (Iterator iter = fLinks.iterator(); iter.hasNext();) {
-			MLink link = (MLink) iter.next();
+		for (MLink link : fLinks) {
 			ocl += "\n insert (" + link.linkedObjects().get(0) + ","
 					+ link.linkedObjects().get(1);
 			ocl += ") into " + link.association().name();

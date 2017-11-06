@@ -37,7 +37,6 @@ import org.tzi.use.util.UniqueNameGenerator;
 import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-@SuppressWarnings("unchecked")
 public abstract class Matching {
 	static List<Map<String, MObject>> matchHasRun = new ArrayList<Map<String,MObject>>();
 	protected MOperation operation; // current operation
@@ -109,8 +108,7 @@ public abstract class Matching {
 			assignTupleValue();
 			String line = "openter rc ";
 			line += operation.name() + "(";
-			for (Iterator iter = operation.paramNames().iterator(); iter.hasNext();) {
-				String name = (String) iter.next();
+			for (String name : operation.paramNames()) {
 				line += name + ",";
 			}
 			line = line.substring(0, line.length()-1) + ")";
@@ -202,19 +200,17 @@ public abstract class Matching {
 	    	}
 	    	// Compile parameter
 	    	int i = 0;
-			Iterator iter = paramNames.iterator();
-			while (iter.hasNext()){
-				VarDecl var = (VarDecl) iter.next();
+	    	for (VarDecl var : paramNames) {
 				TupleType varTuple = (TupleType) var.type();
 				Map<String, Part> varParts = varTuple.getParts();
-				Iterator iter2 = varParts.keySet().iterator();
+				Iterator<String> iter2 = varParts.keySet().iterator();
 				// Source
 				if (var.name().startsWith(RTLKeyword.matchS)){
 					if (paramS == null)
 						paramS = new Part [varParts.keySet().size()];
 					i = 0;
 					while (iter2.hasNext()){
-						String key = iter2.next().toString();
+						String key = iter2.next();
 						Part p = varParts.get(key);
 						paramS[i++] = p;
 					}
@@ -225,7 +221,7 @@ public abstract class Matching {
 						paramC = new Part [varParts.keySet().size()];
 					i = 0;
 					while (iter2.hasNext()){
-						String key = iter2.next().toString();
+						String key = iter2.next();
 						Part p = varParts.get(key);
 						paramC[i++] = p;
 					}
@@ -235,7 +231,7 @@ public abstract class Matching {
 						paramT = new Part [varParts.keySet().size()];
 					i = 0;
 					while (iter2.hasNext()){
-						String key = iter2.next().toString();
+						String key = iter2.next();
 						Part p = varParts.get(key);
 						paramT[i++] = p;
 					}
@@ -249,9 +245,7 @@ public abstract class Matching {
 	 */
 	protected void assignVariableEnvironment(){
 		VariableEnvironment varEnv = fSystemState.system().getVariableEnvironment();
-		Iterator iter = objectList4LHS.keySet().iterator();
-		while (iter.hasNext()){
-			String key = (String)iter.next();
+		for (String key : objectList4LHS.keySet()) {
 			varEnv.assign(key, objectList4LHS.get(key).value());
 		}
 	}
@@ -344,9 +338,7 @@ public abstract class Matching {
 		ocl += rule.oclForUpdateAttributeForward();
 		// OCL in RHS: only for forward transformation
 		if (operation.name().contains(RTLKeyword.forwardTransform)){
-			List fConditions = rule.getTargetRule().getRHS().getConditions();
-			for (Iterator iter = fConditions.iterator(); iter.hasNext();) {
-				String obj = (String) iter.next();
+			for (String obj : rule.getTargetRule().getRHS().getConditions()) { 
 				String ocl1 = obj.substring(1, obj.length()-1).replace("=", ":=");
 				ocl += "\n set " + ocl1;
 			}
@@ -402,12 +394,8 @@ public abstract class Matching {
 		//System.err.println(count + "***" + operation.name() + ":" + objectList4LHS);
 		assignVariableEnvironment();
 		assignTupleValue();
-		Expression condition = null;
-		List<MPrePostCondition> preconditions = operation.preConditions();
-		Iterator iter = preconditions.iterator();
-		while (iter.hasNext()){
-			MPrePostCondition pre = (MPrePostCondition)iter.next();
-			condition = pre.expression();
+		for (MPrePostCondition pre : operation.preConditions()) {
+			Expression condition = pre.expression();
 			Evaluator eval;
 			eval = new Evaluator();
 			MSystem system = fSystemState.system();
@@ -435,18 +423,13 @@ public abstract class Matching {
 		for (int i = 0; i < numVarDecls; ++i) {
 			paramNames.add(operation.paramList().varDecl(i));
 		}
-
-		Iterator iter = paramNames.iterator();
-		while (iter.hasNext()) {
-			VarDecl var = (VarDecl) iter.next();
+		for (VarDecl var : paramNames) {
 			TupleType varTuple = (TupleType) var.type();
 			Map<String, Part> varParts = varTuple.getParts();
 			Set<String> varKeys = varParts.keySet();
 			ArrayList<TupleValue.Part> partList = new ArrayList<>();
-			Iterator iter2 = varKeys.iterator();
 			int index = 0;
-			while (iter2.hasNext()) {
-				String key = iter2.next().toString();
+			for (String key : varKeys) {
 				partList.add(new TupleValue.Part(index, key, varEnv.lookUp(key)));
 			}
 			TupleValue tuple = new TupleValue(varTuple, partList);
@@ -474,10 +457,7 @@ public abstract class Matching {
 	 * @return
 	 */
 	protected boolean hasLinkInPart(int posTuple){
-		List links = null;
-		MObject obj1, obj2 = null;
-		MObject[] objs = new MObject[2];
-		MAssociation assoc = null;
+		List<MLink> links = null;
 		if (posTuple == 0){
 			links = rule.getSourceRule().getLHS().getLinks();
 			links.addAll(rule.getSourceRule().getRHS().getLinks());
@@ -490,13 +470,12 @@ public abstract class Matching {
 		
 		if (links.size() == 0)
 			return true;
-		Iterator iter = links.iterator();
-		while (iter.hasNext()){
-			MLink link = (MLink)iter.next();
-			assoc = link.association();
+		for (MLink link : links) {
+			MAssociation assoc = link.association();
 			List<MObject> linkedObjects = link.linkedObjects();
-			obj1 = objectList4LHS.get(linkedObjects.get(0).name());
-			obj2 = objectList4LHS.get(linkedObjects.get(1).name());
+			MObject obj1 = objectList4LHS.get(linkedObjects.get(0).name());
+			MObject obj2 = objectList4LHS.get(linkedObjects.get(1).name());
+			MObject[] objs = new MObject[2];
 			objs[0] = obj1;
 			objs[1] = obj2;
 			if (!fSystemState.hasLinkBetweenObjects(assoc, objs)){
@@ -570,9 +549,7 @@ public abstract class Matching {
 		links = rule.getCorrRule().getLHS().getLinks();
 		if (links.size() == 0)
 			return true;
-		Iterator iter = links.iterator();
-		while (iter.hasNext()){
-			MLink link = (MLink)iter.next();
+		for (MLink link : links) {
 			assoc = link.association();
 			List<MObject> linkedObjects = link.linkedObjects();
 			if (linkedObjects.get(1).name().equals(

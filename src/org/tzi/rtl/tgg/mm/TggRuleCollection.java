@@ -22,7 +22,6 @@ package org.tzi.rtl.tgg.mm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,24 +32,23 @@ import java.util.TreeMap;
  * @author      hanhdd 
  */
 
-@SuppressWarnings({"unchecked"})
 public class TggRuleCollection {
 	/**
 	 * @uml.property  name="fTggRules"
 	 * @uml.associationEnd  qualifier="name:java.lang.String org.tzi.use.gratra.MTggRule"
 	 */
-	private Map fTggRules;
-	private Map fTggRuleApplications;
+	private Map<String, MTggRule> fTggRules;
+	private Map<String, MTggRuleMatch> fTggRuleApplications;
     private String fName;
 	
 	public TggRuleCollection(){
-		fTggRules = new TreeMap();
-		fTggRuleApplications = new TreeMap();
+		fTggRules = new TreeMap<>();
+		fTggRuleApplications = new TreeMap<>();
 	}
 
     public TggRuleCollection(String fName) {
-        fTggRules = new TreeMap();
-        fTggRuleApplications = new TreeMap();
+        fTggRules = new TreeMap<>();
+        fTggRuleApplications = new TreeMap<>();
         this.fName = fName;
     }
     
@@ -58,19 +56,17 @@ public class TggRuleCollection {
     	//fTggRuleFileName = tggRuleFileName;
     //}
     
-    public Collection getTggRuleApplications(){
+    public Collection<MTggRuleMatch> getTggRuleApplications(){
     	return fTggRuleApplications.values();
     }
     
-    public Collection getTggRules(){
+    public Collection<MTggRule> getTggRules(){
     	return fTggRules.values();
     }
     
-    public Collection getTggRuleNames(){
-    	Collection res = new ArrayList();
-    	Iterator it = fTggRules.values().iterator();
-    	while(it.hasNext()){
-    		MTggRule tggRule = (MTggRule) it.next();
+    public Collection<String> getTggRuleNames(){
+    	Collection<String> res = new ArrayList<String>();
+    	for (MTggRule tggRule : fTggRules.values()) {
     		res.add(tggRule.name());
     	}
     	return res;
@@ -81,15 +77,12 @@ public class TggRuleCollection {
 	}
     
 	public void addTggRule(MTggRule tggRule) {
-		// TODO Auto-generated method stub
 		fTggRules.put(tggRule.name(),tggRule);
 	}
     
 	public void setHTMLFile(String htmlFile) {
-		Map alterTggRules = new TreeMap();
-		Iterator it = fTggRules.values().iterator();
-		while(it.hasNext()){
-			MTggRule tggRule = (MTggRule) it.next();
+		Map<String, MTggRule> alterTggRules = new TreeMap<>();
+		for(MTggRule tggRule : fTggRules.values()){
 			tggRule.setfHTMLFile(htmlFile);
 			alterTggRules.put(tggRule.name(), tggRule);
 		}
@@ -107,8 +100,7 @@ public class TggRuleCollection {
     
     public Map<String, Object> genAllCorrInvariant(){
     	Map<String, Object> invs = new HashMap<String, Object>();
-    	for (Iterator iter = getTggRules().iterator(); iter.hasNext();) {
-			MTggRule tgg = (MTggRule) iter.next();
+    	for (MTggRule tgg : getTggRules()) {
 			invs.putAll(tgg.genCorrInvariant());
 		}
     	return invs;

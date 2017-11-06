@@ -33,7 +33,7 @@ public class ActionRunMatchForward  implements IPluginActionDelegate {
 	public void performAction(IPluginAction pluginAction) {
 		MainWindow window = pluginAction.getParent();
 		fLogWriter = window.logWriter();
-
+		fSession = pluginAction.getSession();
         performAction();
 	}
 }

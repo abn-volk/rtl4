@@ -26,15 +26,12 @@ public class MCorrLink {
 		fTargetLink = targetLink;
 	}
 	public Object getCorrObject() {
-		// TODO Auto-generated method stub
 		return fCorrObject;
 	}
 	public Object getSourceLink() {
-		// TODO Auto-generated method stub
 		return fSourceLink;
 	}
 	public Object getTargetLink() {
-		// TODO Auto-generated method stub
 		return fTargetLink;
 	}
 

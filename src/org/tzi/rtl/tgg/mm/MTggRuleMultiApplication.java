@@ -1,7 +1,6 @@
 package org.tzi.rtl.tgg.mm;
 
 import java.util.List;
-@SuppressWarnings("unchecked")
 public class MTggRuleMultiApplication extends MTggRuleApplication {
 	private List ruleApplications;
 	private Object fConditions; // String

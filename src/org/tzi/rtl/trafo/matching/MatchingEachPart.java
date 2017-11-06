@@ -3,7 +3,6 @@ package org.tzi.rtl.trafo.matching;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +13,6 @@ import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.sys.MObject;
 
-@SuppressWarnings("unchecked")
 public class MatchingEachPart extends Matching {
 	// Store all matches for each part: <matchSR, list match> like a cache
 	public static Map<String, List<Map<String, MObject>>> listMatch;
@@ -81,17 +79,17 @@ public class MatchingEachPart extends Matching {
 		
 		// union 3 part to have a parameter
 		// Source
-		for (Iterator iter1 = matchS.iterator(); iter1.hasNext();) {
-			objectList4LHS.putAll((Map<String, MObject>) iter1.next());
+		for (Map<String, MObject> sourceMatch : matchS) {
+			objectList4LHS.putAll(sourceMatch);
 			// Target
-			for (Iterator iter2 = matchT.iterator(); iter2.hasNext();) {
-				objectList4LHS.putAll((Map<String, MObject>) iter2.next());
+			for (Map<String, MObject> targetMatch : matchT) {
+				objectList4LHS.putAll(targetMatch);
 				if (rule.getCorrRule().getLHS().getObjects().size() > 0){
 					matchC.clear();
 					findAllMatchForPart(1, 1);
 					// Correspondence
-					for (Iterator iter3 = matchC.iterator(); iter3.hasNext();) {
-						objectList4LHS.putAll((Map<String, MObject>) iter3.next());
+					for (Map<String, MObject> corrMatch : matchC) {
+						objectList4LHS.putAll(corrMatch);
 						if (!checkExistInPreviousMatch()){
 							if (checkPreCondition()){
 								// save current match
@@ -134,24 +132,21 @@ public class MatchingEachPart extends Matching {
 		findAllMatchForPart(1, 2);
 		// union 3 part to have a parameter
 		// Source
-		for (Iterator iter1 = matchS.iterator(); iter1.hasNext();) {
-			Map<String, MObject> fMatchS = (Map<String, MObject>) iter1.next();
+		for (Map<String, MObject> fMatchS : matchS) {
 			objectList4LHS.putAll(fMatchS);
 			// Target
-			List objs1 = rule.getTargetRule().getLHS().getObjects();
+			List<MObject> objs1 = rule.getTargetRule().getLHS().getObjects();
 			if (objs1.size() > 0){
 				if (matchT.size() == 0)
 					return result;
-				for (Iterator iter2 = matchT.iterator(); iter2.hasNext();) {
-					Map<String, MObject> fMatchT = (Map<String, MObject>) iter2.next();
+				for (Map<String, MObject> fMatchT : matchT) {
 					objectList4LHS.putAll(fMatchT);
 					// Corr
-					List objs = rule.getCorrRule().getLHS().getObjects();
+					List<MObject> objs = rule.getCorrRule().getLHS().getObjects();
 					if (objs.size() > 0){
 						matchC.clear();
 						findAllMatchForPart(1, 1);
-						for (Iterator iter3 = matchC.iterator(); iter3.hasNext();) {
-							Map<String, MObject> fMatchC = (Map<String, MObject>) iter3.next();
+						for (Map<String, MObject> fMatchC : matchC) {
 							objectList4LHS.putAll(fMatchC);
 							if (!checkExistInPreviousMatch()){
 								if (checkPreCondition()){
@@ -218,10 +213,9 @@ public class MatchingEachPart extends Matching {
 			else {
 				ModelFactory mf = new ModelFactory();
 				MClass cls = mf.createClass(params[pos - 1].type().shortName(), false);
-				objects = fSystemState.objectsOfClass(cls);
-				Iterator iter = objects.iterator();
-				while (iter.hasNext()){
-					MObject obj = (MObject)iter.next();
+				cls.setModel(fSystemState.system().model());
+				objects = fSystemState.objectsOfClassAndSubClasses(cls);
+				for (MObject obj : objects){
 					if (!marks.contains(obj)){
 	                	marks.add(obj); // mark object in parameter
 	                	objectList4LHS.put(params[pos - 1].name(), obj);
