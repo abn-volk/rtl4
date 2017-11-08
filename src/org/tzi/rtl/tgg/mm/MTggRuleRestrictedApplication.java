@@ -1,16 +1,15 @@
 package org.tzi.rtl.tgg.mm;
 
 import java.util.List;
-@SuppressWarnings("unchecked")
 public class MTggRuleRestrictedApplication extends MTggRuleApplication {
 	
-	private List ruleApplications;
+	private List<String> ruleApplications;
 	private Object fConditions; // String
 	
 	public MTggRuleRestrictedApplication(){
 		
 	}
-	public MTggRuleRestrictedApplication(List _ruleApps, Object _cond){
+	public MTggRuleRestrictedApplication(List<String> _ruleApps, Object _cond){
 		setRuleApplications(_ruleApps);
 		setfConditions(_cond);
 	}
@@ -20,10 +19,10 @@ public class MTggRuleRestrictedApplication extends MTggRuleApplication {
 	public Object getfConditions() {
 		return fConditions;
 	}
-	public void setRuleApplications(List ruleApplications) {
+	public void setRuleApplications(List<String> ruleApplications) {
 		this.ruleApplications = ruleApplications;
 	}
-	public List getRuleApplications() {
+	public List<String> getRuleApplications() {
 		return ruleApplications;
 	}
 }

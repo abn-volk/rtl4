@@ -20,7 +20,6 @@ public class MCorrLink {
 	 */
 	private MLink fTargetLink;
 	public MCorrLink(MObject corrObject, MLink sourceLink, MLink targetLink) {
-		// TODO Auto-generated constructor stub
 		fCorrObject = corrObject;
 		fSourceLink = sourceLink;
 		fTargetLink = targetLink;

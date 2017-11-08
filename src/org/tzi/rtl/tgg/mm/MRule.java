@@ -156,8 +156,6 @@ public class MRule implements MModelElement {
 	}
 
 	public void processWithVisitor(MMVisitor v) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public List<String> preconditions() {
@@ -169,38 +167,32 @@ public class MRule implements MModelElement {
 	}
 
 	public int compareTo(MModelElement o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void addAnnotation(MElementAnnotation arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public Map<String, MElementAnnotation> getAllAnnotations() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public MElementAnnotation getAnnotation(String arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getAnnotationValue(String arg0, String arg1) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public boolean isAnnotated() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

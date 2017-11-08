@@ -3,7 +3,6 @@ package org.tzi.rtl.gui.plugins.tgg;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -88,23 +87,19 @@ public class ActionCheckIntegration implements IPluginActionDelegate {
 	}
 
 
-    @SuppressWarnings("unchecked")
 	public boolean execute(Matching curMatch){
     	System.err.println(curMatch.getObjectList4LHS());
     	List<Matching> matches = new ArrayList<Matching>();
     	// find all match with current state
     	if (!result){
-	    	for (Iterator iterator = fTggRuleCollection.getTggRules().iterator(); iterator.hasNext();) {
-	    		MTggRule rule = (MTggRule) iterator.next();
+    		for (MTggRule rule : fTggRuleCollection.getTggRules()) {
 	    		//matches.addAll(findNextMatching(curMatch.getfSystemState(), rule, _first));
 	    		// for each match
 	    		if (!result){
 	        		matches = findNextMatching(curMatch.getfSystemState(), rule);
-	            	Matching matching;
-	            	for (Iterator iter = matches.iterator(); iter.hasNext();) {
+	            	for (Matching matching : matches) {
 	            		fSession.system().beginVariation();
 	            		fSession.system().setRunningTestSuite(true);
-	            		matching = (Matching) iter.next();
 	            		if (!result){
 	    					matching.runOperation(fLogWriter);
 	    					matching.setPrevious(curMatch);
@@ -120,7 +115,6 @@ public class ActionCheckIntegration implements IPluginActionDelegate {
 	    						try {
 	    							fSession.system().endVariation();
 	    						} catch (MSystemException e) {
-	    							// TODO Auto-generated catch block
 	    							e.printStackTrace();
 	    						}
 	    					}
@@ -128,7 +122,6 @@ public class ActionCheckIntegration implements IPluginActionDelegate {
 	            		try {
 	    					fSession.system().endVariation();
 	    				} catch (MSystemException e) {
-	    					// TODO Auto-generated catch block
 	    					e.printStackTrace();
 	    				}
 	    			}
@@ -160,14 +153,12 @@ public class ActionCheckIntegration implements IPluginActionDelegate {
     	input.addAll(fSession.system().state().allObjects());
 	}
 	
-	@SuppressWarnings("unchecked")
 	/*
 	 * All objects on input have transformed
 	 */
 	public boolean checkTestCase(Matching match){
-		for (Iterator iter = input.iterator(); iter.hasNext();) {
+		for (MObject obj : input) {
 			boolean flag = false;
-			MObject obj = (MObject) iter.next();
 			//System.err.println(obj.name());
 			if (obj != null && !obj.name().equals("rc")){
 				Matching tmp = match;

@@ -103,7 +103,6 @@ public abstract class Matching {
 		//if (!checkExistInPreviousMatch(firstMatch)){
 		if (!matchHasRun.contains(objectList4LHS)){
 			matchHasRun.add(objectList4LHS);
-			System.out.println(getObjectList4LHS());
 			assignVariableEnvironment();
 			assignTupleValue();
 			String line = "openter rc ";
@@ -197,6 +196,7 @@ public abstract class Matching {
 	    	int numVarDecls = operation.paramList().size();
 	    	for (int i = 0; i < numVarDecls; ++i) {
 	    		paramNames.add(operation.paramList().varDecl(i));
+	    		System.out.println(operation.paramList().varDecl(i).toString());
 	    	}
 	    	// Compile parameter
 	    	int i = 0;

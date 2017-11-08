@@ -43,7 +43,6 @@ import org.tzi.use.uml.sys.MSystemState;
  * @version $ProjectVersion: 0.393 $
  * @author hanhdd
  */
-@SuppressWarnings( { "unchecked" })
 public class MTggRule implements MModelElement {
 	/**
 	 * @uml.property name="fSourceRule"
@@ -143,8 +142,6 @@ public class MTggRule implements MModelElement {
 	}
 
 	public void processWithVisitor(MMVisitor v) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public String toString() {
@@ -157,31 +154,25 @@ public class MTggRule implements MModelElement {
 
 	@Override
 	public void addAnnotation(MElementAnnotation arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public Map<String, MElementAnnotation> getAllAnnotations() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public MElementAnnotation getAnnotation(String arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getAnnotationValue(String arg0, String arg1) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean isAnnotated() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

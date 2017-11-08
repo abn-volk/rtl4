@@ -2,14 +2,14 @@ package org.tzi.rtl.tgg.mm;
 
 import java.util.List;
 public class MTggRuleMultiApplication extends MTggRuleApplication {
-	private List ruleApplications;
-	private Object fConditions; // String
+	private List<String> ruleApplications;
+	private Object fConditions;
 	
 	public MTggRuleMultiApplication(){
 		
 	}
 	
-	public MTggRuleMultiApplication(List _ruleApps, Object _cond){
+	public MTggRuleMultiApplication(List<String> _ruleApps, Object _cond){
 		setRuleApplications(_ruleApps);
 		setfConditions(_cond);
 	}
@@ -23,12 +23,12 @@ public class MTggRuleMultiApplication extends MTggRuleApplication {
 	}
 
 
-	public void setRuleApplications(List ruleApplications) {
+	public void setRuleApplications(List<String> ruleApplications) {
 		this.ruleApplications = ruleApplications;
 	}
 
 
-	public List getRuleApplications() {
+	public List<String> getRuleApplications() {
 		return ruleApplications;
 	}
 }
