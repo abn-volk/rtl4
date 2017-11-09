@@ -2,19 +2,21 @@ package org.tzi.rtl.gui.plugins.tgg;
 
 
 
-import java.awt.event.WindowEvent;
+import java.beans.PropertyVetoException;
+import java.net.URL;
 
-import javax.swing.JFrame;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.tzi.rtl.tgg.manager.RTLRuleTree;
 import org.tzi.rtl.tgg.mm.TggRuleCollection;
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.main.ViewFrame;
 
 public class Rules {
 	private static TggRuleCollection fTggRules = new TggRuleCollection();
     private static MainWindow fMainWindow = null;
-    private static JFrame fRuleFrame = null;
+    private static ViewFrame fViewFrame = null;
     
     public static TggRuleCollection getTggRuleCollection() { return fTggRules; }
     
@@ -25,32 +27,38 @@ public class Rules {
     
     public static void setRTLRule (TggRuleCollection rules) {
         fTggRules = rules;
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				fRuleFrame = RTLRuleTree.createAndShowGUI(fTggRules, fMainWindow);
-			}
-		});
     }
 
 	public static void setMainWindow(MainWindow fParent) {
 		fMainWindow = fParent;
 	}
 	
-	public static void showRules (MainWindow fParent) {
+	public static void showRules(MainWindow fParent) {
 		if (fTggRules.getTggRules().size() == 0)
 			JOptionPane.showMessageDialog(fParent, "No rules available.");
 		else {
-			if (fRuleFrame == null)
-				fRuleFrame = RTLRuleTree.createAndShowGUI(fTggRules, fParent);
-			else {
-				fRuleFrame.setVisible(true);
+			System.out.println("Je ne sais pas");
+			if (fViewFrame == null) {
+				System.out.println("Comment te dire j'ai peur de tout foutre en l'air");
+				URL url = Rules.class.getResource("/resources/rtl.png");
+				fViewFrame = new ViewFrame("Transformation rules", null, "");
+				fViewFrame.setFrameIcon(new ImageIcon(url));
+				fViewFrame.setContentPane(new RTLRuleTree(fTggRules, fMainWindow));
+				fViewFrame.pack();
+				fParent.addNewViewFrame(fViewFrame);
 			}
+			else 
+				fViewFrame.show();
 		}
 	}
 	
 	public static void closeRuleWindow () {
-		if (fRuleFrame != null)
-			fRuleFrame.dispatchEvent(new WindowEvent(fRuleFrame, WindowEvent.WINDOW_CLOSING));
+		if (fViewFrame != null)
+			try {
+				fViewFrame.setClosed(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}
 	}
 	
 }
