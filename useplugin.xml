@@ -26,7 +26,6 @@
 			toolbaritem="Auto run forward"
 			id="org.tzi.rtl.gui.plugins.tgg.ActionAutoMatchForward">
 		</action>
-		
 		<action label="Run match" icon="resources/run.png"
 			class="org.tzi.rtl.gui.plugins.tgg.ActionRunMatchForward"
 			tooltip="Run match"
@@ -43,7 +42,6 @@
 			toolbaritem="Next match"
 			id="org.tzi.rtl.gui.plugins.tgg.ActionNextMatchForward">
 		</action>
-		
 		<action label="Previous match" icon="resources/previous.png"
 			class="org.tzi.rtl.gui.plugins.tgg.ActionPreviousMatchForward"
 			tooltip="Previous match"
@@ -52,8 +50,23 @@
 			toolbaritem="Previous match"
 			id="org.tzi.rtl.gui.plugins.tgg.ActionPreviousMatchForward">
 		</action>
-		<action label="Show rule list" icon="resources/list.png" class="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList" tooltip="Show rule list" menu="RestrictedGraphTrafo Plugin" menuitem="Show rule list"
-			toolbaritem="Show rule list" id="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList">
+		<action label="Show rule list" 
+			icon="resources/list.png" 
+			class="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList" 
+			tooltip="Show rule list" 
+			menu="RestrictedGraphTrafo Plugin" 
+			menuitem="Show rule list"
+			toolbaritem="Show rule list" 
+			id="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList">
+		</action>
+		<action label="Incremental update" 
+			icon="resources/delta.png" 
+			class="org.tzi.rtl.gui.plugins.tgg.ActionIncrementalUpdate" 
+			tooltip="Incremental update" 
+			menu="Forward transformation" 
+			menuitem="Incremental update"
+			toolbaritem="Incremental update" 
+			id="org.tzi.rtl.gui.plugins.tgg.ActionShowRuleList">
 		</action>
 	</actions>
 </plugin>

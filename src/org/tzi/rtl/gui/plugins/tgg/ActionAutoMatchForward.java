@@ -31,7 +31,7 @@ public class ActionAutoMatchForward  implements IPluginActionDelegate {
             ActionFindAllMatchForward.setStep(-1);
             //step = -1;
             ActionFindAllMatchForward.nextStep(fLogWriter, fSession);
-            while (ActionFindAllMatchForward.currentMatch != null){
+            while (ActionFindAllMatchForward.getCurrentMatch() != null){
             	ActionFindAllMatchForward.runMatch(fSession, fLogWriter);
             	//ActionFindAllMatchForward.nextStep(fLogWriter, fSession);
             }

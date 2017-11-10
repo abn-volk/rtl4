@@ -2,7 +2,6 @@ package org.tzi.rtl.tgg.mm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.UniqueNameGenerator;
 
-@SuppressWarnings( { "unchecked" })
 public class MTggPattern {
 	/**
 	 * @uml.property name="fSystemState"
