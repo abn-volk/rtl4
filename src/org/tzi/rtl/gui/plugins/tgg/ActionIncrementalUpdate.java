@@ -6,7 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import org.tzi.gui.ChangeListenerDialog;
+import org.tzi.rtl.trafo.incremental.ChangeListenerDialog;
 import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.runtime.gui.IPluginAction;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;

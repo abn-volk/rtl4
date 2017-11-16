@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.tzi.rtl.tgg.mm.MTggRule;
 import org.tzi.rtl.tgg.parser.RTLKeyword;
+import org.tzi.rtl.trafo.incremental.MatchEvent;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MAssociation;
@@ -99,9 +100,9 @@ public abstract class Matching {
 	 */
 	public MSystemState runOperation(PrintWriter fLogWriter) {
 		//System.err.println("*****************************" + objectList4LHS);
-		
 		//if (!checkExistInPreviousMatch(firstMatch)){
 		if (!matchHasRun.contains(objectList4LHS)){
+			fSystemState.system().getEventBus().post(new MatchEvent(true));
 			matchHasRun.add(objectList4LHS);
 			assignVariableEnvironment();
 			assignTupleValue();
@@ -132,6 +133,7 @@ public abstract class Matching {
 				return null;
 			}
 			fSystemState = new MSystemState(fUniqueNameGenerator.generate("tggState#"), fSystemState.system().state());
+			fSystemState.system().getEventBus().post(new MatchEvent(false));
 			return fSystemState;
 		}
 		else{

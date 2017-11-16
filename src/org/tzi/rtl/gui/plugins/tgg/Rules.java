@@ -37,9 +37,7 @@ public class Rules {
 		if (fTggRules.getTggRules().size() == 0)
 			JOptionPane.showMessageDialog(fParent, "No rules available.");
 		else {
-			System.out.println("Je ne sais pas");
 			if (fViewFrame == null) {
-				System.out.println("Comment te dire j'ai peur de tout foutre en l'air");
 				URL url = Rules.class.getResource("/resources/rtl.png");
 				fViewFrame = new ViewFrame("Transformation rules", null, "");
 				fViewFrame.setFrameIcon(new ImageIcon(url));

@@ -22,6 +22,21 @@
 
 package org.tzi.rtl.gui.views.diagrams.tgg.tggdiagram;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.print.PageFormat;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+
+import org.tzi.rtl.tgg.mm.MRule;
+import org.tzi.rtl.tgg.mm.MTggRule;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
@@ -29,25 +44,14 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
-
-import org.tzi.rtl.tgg.mm.MRule;
-import org.tzi.rtl.tgg.mm.MTggRule;
-
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.print.PageFormat;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /** 
  * @author Duc-Hanh Dang 
  */
-@SuppressWarnings({"unused", "unchecked", "serial"})
+@SuppressWarnings({"unused", "serial"})
 public class TggDiagramView extends JPanel 
   implements View, PrintableView, SortChangeListener {
     /**
@@ -245,10 +249,8 @@ public class TggDiagramView extends JPanel
      * Helper for initState()
      */
     
-    public void addObjects(List objects, int groupId){    	
-	    Iterator it = objects.iterator();
-	    while (it.hasNext() ) {
-	    	MObject obj = (MObject) it.next();
+    public void addObjects(List<MObject> objects, int groupId){    	
+	    for (MObject obj : objects) {
 	        fTggDiagram.addObject(obj,groupId);
 	    }  
     }
@@ -257,10 +259,8 @@ public class TggDiagramView extends JPanel
      * Helper for initState()
      */
     
-    public void addLinks(List links, int groupId){    	
-	    Iterator it = links.iterator();
-	    while (it.hasNext() ) {
-	    	MLink link = (MLink) it.next();
+    public void addLinks(List<MLink> links, int groupId){    	
+	    for (MLink link : links) {
 	        fTggDiagram.addLink(link,groupId);
 	    }  
     }
@@ -270,7 +270,7 @@ public class TggDiagramView extends JPanel
      */
     
     void displayOCLConditions(){
-    	List conditions = fTggRule.getSourceRule().preconditions();
+    	List<String> conditions = fTggRule.getSourceRule().preconditions();
     	setTextHtmlPane(fTggSL_HtmlPane, conditions);
     	conditions = this.fTggRule.getSourceRule().postconditions();
     	setTextHtmlPane(fTggSR_HtmlPane, conditions);
@@ -288,17 +288,14 @@ public class TggDiagramView extends JPanel
     /*
      * Helper for displayOCLConditions()
      */
-    private void setTextHtmlPane(JEditorPane tggSL_HtmlPane, List conditions) {
-		// TODO Auto-generated method stub
+    private void setTextHtmlPane(JEditorPane tggSL_HtmlPane, List<String> conditions) {
     	StringWriter sw = new StringWriter();
         sw.write("<html><head>");
         sw.write("<META content=\"text/html; charset=utf-8\">");
         sw.write("<style> <!-- body { font-family: sansserif; } --> </style>");
         sw.write("</head><body><font size=\"-1\">");  
         
-        Iterator it = conditions.iterator();
-        while(it.hasNext()){
-        	String st = (String) it.next();        	
+        for (String st : conditions) {      	
         	st = st.replace(">", "&gt;");
         	st = st.replace("<", "&lt;");
         	sw.write(st);
@@ -316,7 +313,7 @@ public class TggDiagramView extends JPanel
      *
      * @return Set(MAssociation) 
      */
-    Set getAllAssociationsBetweenClasses(Set classes) {
+    Set<MAssociation> getAllAssociationsBetweenClasses(Set<MClass> classes) {
         return fTggRule.getModel().getAllAssociationsBetweenClasses(classes);
     }
 
@@ -349,32 +346,25 @@ public class TggDiagramView extends JPanel
         fTggDiagram.printDiagram(pf, "Triple rule diagram" );
     }
 
-	public void detachModel() {
-		// TODO Auto-generated method stub
-		
+	public void detachModel() {		
 	}
 
 
 	public void stateChanged(SortChangeEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void export(Graphics2D g) {
-		// TODO Auto-generated method stub
-		
+	public void export(Graphics2D g) {		
 	}
 
 	@Override
 	public float getContentHeight() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public float getContentWidth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

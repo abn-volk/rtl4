@@ -1,4 +1,4 @@
-package org.tzi.gui;
+package org.tzi.rtl.trafo.incremental;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -20,9 +20,8 @@ import org.tzi.rtl.tgg.mm.MTggRule;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkEnd;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
@@ -38,13 +37,15 @@ public class ChangeListenerDialog extends JPanel {
 
 	private static final long serialVersionUID = 72384374L;
 	
-	private Map<String, Set<MTggRule>> sourceLHSClassRules = new HashMap<>();
+	private Map<String, Set<MTggRule>> sourceRHSClassRules = new HashMap<>();
 	// private Map<String, Set<MTggRule>> sourceRHSClassRules = new HashMap<>();
 	private Map<String, Set<MTggRule>> sourceAssociationRules = new HashMap<>();
+	private Map<String, Set<MTggRule>> attrRules = new HashMap<>();
 	
 	private PrintWriter fLogWriter;
 	private Session fSession;
 	private EventBus fEventBus;
+	private boolean running;
 	
 	public ChangeListenerDialog(MainWindow parent, Session session) {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -64,15 +65,21 @@ public class ChangeListenerDialog extends JPanel {
 
 	public void setRules(Collection<MTggRule> rules) {
 		for (MTggRule rule : rules) {
-			List<MObject> lhsObjects = rule.getSourceRule().getLHS().getObjects();
-			List<MObject> lhsObjectsWithLinks = rule.getSourceRule().getLHS().getLinks().stream().flatMap(lnk -> lnk.linkedObjects().stream()).collect(Collectors.toList());
-			lhsObjects.removeAll(lhsObjectsWithLinks);
-			Set<MClass> lhsClassesToWatch = lhsObjects.stream().map(o -> o.cls()).collect(Collectors.toSet());
+			fLogWriter.println(String.format("Rule: %s", rule.name().toString()));
+			List<MObject> corrObjects = rule.getCorrRule().getAllObjects();
+			fLogWriter.println(String.format("Correlation objects: %s", corrObjects.toString()));
+			List<MObject> rhsObjects = rule.getSourceRule().getRHS().getObjects();
+			fLogWriter.println(String.format("LHS source objects: %s", rhsObjects.toString()));
+			List<MObject> rhsObjectsWithLinks = rule.getSourceRule().getRHS().getLinks().stream().flatMap(lnk -> lnk.linkedObjects().stream()).collect(Collectors.toList());
+			fLogWriter.println(String.format("LHS objs with links: %s", rhsObjectsWithLinks.toString()));
+			rhsObjects.removeAll(rhsObjectsWithLinks);
+			Set<MClass> lhsClassesToWatch = rhsObjects.stream().map(o -> o.cls()).collect(Collectors.toSet());
+			fLogWriter.println(String.format("Classes to watch: %s", lhsClassesToWatch.toString()));
 			for (MClass cls : lhsClassesToWatch) {
-				Set<MTggRule> ruleSet = sourceLHSClassRules.get(cls.name());
+				Set<MTggRule> ruleSet = sourceRHSClassRules.get(cls.name());
 				if (ruleSet == null) {
 					ruleSet = new HashSet<MTggRule>();
-					sourceLHSClassRules.put(cls.name(), ruleSet);
+					sourceRHSClassRules.put(cls.name(), ruleSet);
 				}
 				ruleSet.add(rule);
 			}
@@ -83,6 +90,7 @@ public class ChangeListenerDialog extends JPanel {
 				}
 				return true;
 			}).map(lnk -> lnk.association()).collect(Collectors.toSet());
+			fLogWriter.println(String.format("Source associations: %s", sourceAssociations.toString()));
 			for (MAssociation asc : sourceAssociations) {
 				Set<MTggRule> ruleSet = sourceAssociationRules.get(asc.name());
 				if (ruleSet == null) {
@@ -90,7 +98,20 @@ public class ChangeListenerDialog extends JPanel {
 					sourceAssociationRules.put(asc.name(), ruleSet);
 				}
 				ruleSet.add(rule);
-			}			
+			}
+			List<MObject> newRHSObjs = rule.getSourceRule().getRHS().getObjects();
+			for (MLink corrLink : rule.getCorrRule().getRHS().getLinks()) {
+				for (MObject end : corrLink.linkedObjects()) {
+					if (newRHSObjs.contains(end)) {
+						Set<MTggRule> ruleSet = attrRules.get(end.cls().name());
+						if (ruleSet == null) {
+							ruleSet = new HashSet<MTggRule>();
+							attrRules.put(end.cls().name(), ruleSet);
+						}
+						ruleSet.add(rule);
+					}
+				}
+			}
 			/* 
 			List<MObject> rhsObjects = rule.getSourceRule().getRHS().getObjects();
 			Set<MClass> rhsClassesToWatch = lhsObjects.stream().map(o -> o.cls()).collect(Collectors.toSet());
@@ -104,17 +125,20 @@ public class ChangeListenerDialog extends JPanel {
 			}
 			*/
 		}
-		fLogWriter.println("Class - rule mappings: " + sourceLHSClassRules.toString());
+		fLogWriter.println("Class - rule mappings: " + sourceRHSClassRules.toString());
 		fLogWriter.println("Association - rule mappings: " + sourceAssociationRules.toString());
+		fLogWriter.println("Attr - rule mappings: " + attrRules.toString());
 	}
 	
 	@Subscribe
     public void onObjectCreated(ObjectCreatedEvent e) {
-		MObject obj = e.getCreatedObject();
-		fLogWriter.println(String.format("Object %s:%s created.", obj.name(), obj.cls().name()));
-		Set<MTggRule> possibleRules = sourceLHSClassRules.get(obj.cls().name());
-		if (possibleRules != null) {
-			incrementalTransform(possibleRules);
+		if (!running) {
+			MObject obj = e.getCreatedObject();
+			Set<MTggRule> matchedRules = sourceRHSClassRules.get(obj.cls().name());
+			fLogWriter.println(String.format("Object %s:%s created. Rules %s matched.", obj.name(), obj.cls().name(), matchedRules.toString()));
+			if (matchedRules != null) {
+				incrementalTransform(matchedRules);
+			}
 		}
 	}
 	
@@ -129,17 +153,24 @@ public class ChangeListenerDialog extends JPanel {
 	
 	@Subscribe
 	public void onLinkInserted(LinkInsertedEvent e) {
-		MAssociation asc = e.getAssociation();
-		fLogWriter.println("Inserted: " + asc.name());
-		Set<MTggRule> possibleRules = sourceAssociationRules.get(asc.name());
-		if (possibleRules != null) {
-			fLogWriter.println("Possible rules found: " + possibleRules.toString());
-			incrementalTransform(possibleRules);
+		if (!running) {
+			MAssociation asc = e.getAssociation();
+			fLogWriter.println("Inserted: " + asc.name());
+			Set<MTggRule> possibleRules = sourceAssociationRules.get(asc.name());
+			if (possibleRules != null) {
+				fLogWriter.println("Possible rules found: " + possibleRules.toString());
+				incrementalTransform(possibleRules);
+			}
 		}
 	}
 	
 	@Subscribe
 	public void onLinkDeleted(LinkDeletedEvent e) {
+	}
+	
+	@Subscribe
+	public void onMatchEvent(MatchEvent e) {
+		running = e.isRunning();
 	}
 	
 	private void incrementalTransform(Set<MTggRule> possibleRules) {
