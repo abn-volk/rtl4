@@ -471,11 +471,11 @@ public class MRule implements MModelElement {
 
 	public String genOCLForCorrObjectAndLinkInRight(PerformedTransformation tran2,
 			UniqueNameGenerator fUniqueNameGenerator) {
-		return fRhs.genOCLForCreateObject(tran2, fUniqueNameGenerator) + fRhs.genOCLForCreateLink(tran2, fUniqueNameGenerator);
+		return fRhs.genOCLForCorrObject(tran2, fUniqueNameGenerator) + fRhs.genOCLForCreateLink(tran2, fUniqueNameGenerator);
 	}
 	
 	public String genOCLForTargetObjectAndLinkInRight(PerformedTransformation tran2,
 			UniqueNameGenerator fUniqueNameGenerator) {
-		return fRhs.genOCLForCreateObject(tran2, fUniqueNameGenerator) + fRhs.genOCLForCreateLink(fUniqueNameGenerator);
+		return fRhs.genOCLForTargetObject(tran2, fUniqueNameGenerator) + fRhs.genOCLForCreateLink(fUniqueNameGenerator);
 	}
 }

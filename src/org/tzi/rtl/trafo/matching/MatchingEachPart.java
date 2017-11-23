@@ -82,6 +82,7 @@ public class MatchingEachPart extends Matching {
 		// Source
 		for (Map<String, MObject> sourceMatch : matchS) {
 			objectList4LHS.putAll(sourceMatch);
+			tran.addSourceObjects(sourceMatch.values());
 			// Target
 			for (Map<String, MObject> targetMatch : matchT) {
 				objectList4LHS.putAll(targetMatch);

@@ -143,11 +143,23 @@ public class MTggPattern {
 		return ocl;
 	}
 	
-	public String genOCLForCreateObject(PerformedTransformation tran2, UniqueNameGenerator fUniqueNameGenerator) {
+	public String genOCLForCorrObject(PerformedTransformation tran2, UniqueNameGenerator fUniqueNameGenerator) {
 		StringBuilder oclBuilder = new StringBuilder();
 		for (MObject obj : fObjects) {
 			String objNewName = fUniqueNameGenerator.generate("N_" + obj.cls().name());
 			tran2.addParamToObjMapping(obj.name(), objNewName);
+			tran2.addTargetObject(objNewName);
+			oclBuilder.append("\n create ").append(objNewName).append(":").append(obj.cls().name());
+			oclBuilder.append("\n let ").append(obj.name()).append("=").append(objNewName);
+		}
+		return oclBuilder.toString();
+	}
+	
+	public String genOCLForTargetObject(PerformedTransformation tran2, UniqueNameGenerator fUniqueNameGenerator) {
+		StringBuilder oclBuilder = new StringBuilder();
+		for (MObject obj : fObjects) {
+			String objNewName = fUniqueNameGenerator.generate("N_" + obj.cls().name());
+			tran2.addTargetObject(objNewName);
 			oclBuilder.append("\n create ").append(objNewName).append(":").append(obj.cls().name());
 			oclBuilder.append("\n let ").append(obj.name()).append("=").append(objNewName);
 		}

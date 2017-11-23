@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -123,7 +124,7 @@ public abstract class Matching {
 			}
 			if (operation.name().contains(RTLKeyword.forwardTransform)){
 				assignVariableEnvironment();
-				createTargetNode(fLogWriter);
+				createTargetNode(tran, fLogWriter);
 			}
 			assignVariableEnvironment();
 			createCorrespondenceNode(tran, fLogWriter);
@@ -318,6 +319,16 @@ public abstract class Matching {
 	 */
 	public void createTargetNode(PrintWriter fLogWriter){
 		String cmd = rule.getTargetRule().genOCLForCreateObjectAndLinkInRight(fUniqueNameGenerator);
+		String tmp[] = cmd.split("\n");
+		for (int i = 0; i < tmp.length; i++) {
+			if (!tmp[i].trim().equals(""))
+				cmdExec(tmp[i], false, fLogWriter);
+		}
+	}
+	
+	
+	public void createTargetNode(PerformedTransformation tran2, PrintWriter fLogWriter){
+		String cmd = rule.getTargetRule().genOCLForTargetObjectAndLinkInRight(tran2, fUniqueNameGenerator);
 		String tmp[] = cmd.split("\n");
 		for (int i = 0; i < tmp.length; i++) {
 			if (!tmp[i].trim().equals(""))
@@ -563,6 +574,7 @@ public abstract class Matching {
 							return false;
 						}
 					}
+					tran.addSourceLinks(fSystemState.linkBetweenObjects(mLink.association(), Arrays.asList(objs)));
 				}
 			}
 		}
