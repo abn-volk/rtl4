@@ -13,6 +13,7 @@ import java.util.Set;
 import org.tzi.rtl.tgg.mm.MTggRule;
 import org.tzi.rtl.tgg.parser.RTLKeyword;
 import org.tzi.rtl.trafo.incremental.MatchEvent;
+import org.tzi.rtl.trafo.incremental.PerformedTransformation;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MAssociation;
@@ -52,14 +53,17 @@ public abstract class Matching {
 	protected Part[] paramC = null; // Type param in corr
 	protected Part[] paramT = null; // Type param in target
 	protected static UniqueNameGenerator fUniqueNameGenerator;
+	protected PerformedTransformation tran;
 	
 	public Matching(){
 		setOperation(null);
+		tran = new PerformedTransformation();
 		setParameters();
 	}
 
 	public Matching(MOperation _operation){
 		setOperation(_operation);
+		tran = new PerformedTransformation();
 		setParameters();
 	}
 
@@ -122,18 +126,20 @@ public abstract class Matching {
 				createTargetNode(fLogWriter);
 			}
 			assignVariableEnvironment();
-			createCorrespondenceNode(fLogWriter);
+			createCorrespondenceNode(tran, fLogWriter);
 			if (operation.name().contains(RTLKeyword.forwardTransform)){
 				assignVariableEnvironment();
-				updateMappedAttributes(fLogWriter);
+				updateMappedAttributes(tran, fLogWriter);
 			}
 			cmdExec("opexit", false, fLogWriter);
 			if (hasFailed){
+				fSystemState.system().getEventBus().post(new MatchEvent(false));
 				fSystemState = null;
 				return null;
 			}
 			fSystemState = new MSystemState(fUniqueNameGenerator.generate("tggState#"), fSystemState.system().state());
 			fSystemState.system().getEventBus().post(new MatchEvent(false));
+			fSystemState.system().getEventBus().post(tran);
 			return fSystemState;
 		}
 		else{
@@ -141,7 +147,7 @@ public abstract class Matching {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Check a match existed in previous matches
 	 * 
@@ -329,7 +335,15 @@ public abstract class Matching {
 			if (!tmp[i].trim().equals(""))
 				cmdExec(tmp[i], false, fLogWriter);
 		}
-		
+	}
+	
+	private void createCorrespondenceNode(PerformedTransformation tran2, PrintWriter fLogWriter) {
+		String cmd = rule.getCorrRule().genOCLForCorrObjectAndLinkInRight(tran2, fUniqueNameGenerator);
+		String tmp[] = cmd.split("\n");
+		for (int i = 0; i < tmp.length; i++) {
+			if (!tmp[i].trim().equals(""))
+				cmdExec(tmp[i], false, fLogWriter);
+		}
 	}
 	
 	/**
@@ -350,6 +364,23 @@ public abstract class Matching {
 			if (!tmp[i].trim().equals(""))
 				cmdExec(tmp[i], false, fLogWriter);
 		}
+	}
+	
+	private void updateMappedAttributes(PerformedTransformation tran2, PrintWriter fLogWriter) {
+		String ocl = "";
+		ocl += rule.oclForUpdateAttributeForward(tran2);
+		// OCL in RHS: only for forward transformation
+		if (operation.name().contains(RTLKeyword.forwardTransform)){
+			for (String obj : rule.getTargetRule().getRHS().getConditions()) { 
+				String ocl1 = obj.substring(1, obj.length()-1).replace("=", ":=");
+				ocl += "\n set " + ocl1;
+			}
+		}
+		String tmp[] = ocl.split("\n");
+		for (int i = 0; i < tmp.length; i++) {
+			if (!tmp[i].trim().equals(""))
+				cmdExec(tmp[i], false, fLogWriter);
+		}	
 	}
 	
 	/**

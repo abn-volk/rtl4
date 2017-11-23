@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.tzi.rtl.tgg.parser.RTLKeyword;
+import org.tzi.rtl.trafo.incremental.PerformedTransformation;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MElementAnnotation;
@@ -466,5 +467,15 @@ public class MRule implements MModelElement {
 	
 	public String genOCLForCreateObjectAndLinkInLeft(UniqueNameGenerator fUniqueNameGenerator) {
 		return fLhs.genOCLForCreateObject(fUniqueNameGenerator);
+	}
+
+	public String genOCLForCorrObjectAndLinkInRight(PerformedTransformation tran2,
+			UniqueNameGenerator fUniqueNameGenerator) {
+		return fRhs.genOCLForCreateObject(tran2, fUniqueNameGenerator) + fRhs.genOCLForCreateLink(tran2, fUniqueNameGenerator);
+	}
+	
+	public String genOCLForTargetObjectAndLinkInRight(PerformedTransformation tran2,
+			UniqueNameGenerator fUniqueNameGenerator) {
+		return fRhs.genOCLForCreateObject(tran2, fUniqueNameGenerator) + fRhs.genOCLForCreateLink(fUniqueNameGenerator);
 	}
 }

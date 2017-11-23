@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.tzi.rtl.tgg.parser.RTLKeyword;
+import org.tzi.rtl.trafo.incremental.PerformedTransformation;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MLink;
@@ -142,6 +143,17 @@ public class MTggPattern {
 		return ocl;
 	}
 	
+	public String genOCLForCreateObject(PerformedTransformation tran2, UniqueNameGenerator fUniqueNameGenerator) {
+		StringBuilder oclBuilder = new StringBuilder();
+		for (MObject obj : fObjects) {
+			String objNewName = fUniqueNameGenerator.generate("N_" + obj.cls().name());
+			tran2.addParamToObjMapping(obj.name(), objNewName);
+			oclBuilder.append("\n create ").append(objNewName).append(":").append(obj.cls().name());
+			oclBuilder.append("\n let ").append(obj.name()).append("=").append(objNewName);
+		}
+		return oclBuilder.toString();
+	}
+	
 	public String genOCLForCreateLink(UniqueNameGenerator fUniqueNameGenerator) {
 		String ocl = "";
 		// Links
@@ -151,5 +163,17 @@ public class MTggPattern {
 			ocl += ") into " + link.association().name();
 		}
 		return ocl;
+	}
+
+	public String genOCLForCreateLink(PerformedTransformation tran2, UniqueNameGenerator fUniqueNameGenerator) {
+		StringBuilder oclBuilder = new StringBuilder();
+		for (MLink link : fLinks) {
+			String target = link.linkedObjects().get(0).name();
+			String corr = link.linkedObjects().get(1).name();
+			tran2.addRightToCorr(target, corr);
+			oclBuilder.append("\n insert (").append(target).append(",").append(corr).append(") into ").append(link.association().name());
+		}
+		return oclBuilder.toString();
+		
 	}
 }

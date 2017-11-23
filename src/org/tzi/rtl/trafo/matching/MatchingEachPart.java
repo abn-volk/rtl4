@@ -50,6 +50,7 @@ public class MatchingEachPart extends Matching {
 		rule = match.rule;
 		//next = match.next;
 		previous = match.previous;
+		tran = match.tran;
 	}
 	
 	@Override
@@ -134,11 +135,13 @@ public class MatchingEachPart extends Matching {
 		// Source
 		for (Map<String, MObject> fMatchS : matchS) {
 			objectList4LHS.putAll(fMatchS);
+			tran.addSourceToParamMappings(fMatchS);
 			// Target
 			List<MObject> objs1 = rule.getTargetRule().getLHS().getObjects();
 			if (objs1.size() > 0){
-				if (matchT.size() == 0)
+				if (matchT.size() == 0) {
 					return result;
+				}
 				for (Map<String, MObject> fMatchT : matchT) {
 					objectList4LHS.putAll(fMatchT);
 					// Corr
@@ -146,16 +149,15 @@ public class MatchingEachPart extends Matching {
 					if (objs.size() > 0){
 						matchC.clear();
 						findAllMatchForPart(1, 1);
-						for (Map<String, MObject> fMatchC : matchC) {
-							objectList4LHS.putAll(fMatchC);
-							if (!checkExistInPreviousMatch()){
-								if (checkPreCondition()){
-									// save current match
-									Matching tmp = new MatchingEachPart(this);
-									result.add(tmp);
-								}
+						// for (Map<String, MObject> fMatchC : matchC) {
+						if (!checkExistInPreviousMatch()){
+							if (checkPreCondition()){
+								// save current match
+								Matching tmp = new MatchingEachPart(this);
+								result.add(tmp);
 							}
 						}
+						// }
 					}
 					else{
 						if (!checkExistInPreviousMatch()){

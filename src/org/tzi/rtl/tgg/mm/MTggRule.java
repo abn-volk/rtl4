@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.tzi.rtl.tgg.parser.RTLKeyword;
+import org.tzi.rtl.trafo.incremental.PerformedTransformation;
 import org.tzi.use.uml.mm.MElementAnnotation;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
@@ -538,5 +539,24 @@ public class MTggRule implements MModelElement {
 			}
 		}
 		return ocl;
+	}
+
+	public String oclForUpdateAttributeForward(PerformedTransformation tran) {
+		StringBuilder oclBuilder = new StringBuilder();
+		for (MObject obj : fCorrRule.getRHS().getObjects()) {
+			for (String className : fInvariants.keySet()) {
+				if (obj.cls().name().equals(className)){
+					String inv = (String)fInvariants.get(className);
+					if (inv.startsWith("["))
+						inv = inv.substring(1, inv.length()-1);
+					String selfOcl = inv.replace("=", ":=");
+					tran.addCorrOcl(obj.name(), selfOcl);
+					oclBuilder
+						.append("\nset ")
+						.append(inv.replace("=", ":=").replace(RTLKeyword.self, obj.name()));
+				}
+			}
+		}
+		return oclBuilder.toString();
 	}
 }

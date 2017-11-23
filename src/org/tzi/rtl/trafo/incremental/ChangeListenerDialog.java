@@ -17,11 +17,12 @@ import javax.swing.JPanel;
 import org.tzi.rtl.gui.plugins.tgg.ActionFindAllMatchForward;
 import org.tzi.rtl.gui.plugins.tgg.Rules;
 import org.tzi.rtl.tgg.mm.MTggRule;
+import org.tzi.rtl.tgg.parser.RTLKeyword;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
+import org.tzi.use.main.shell.Shell;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkEnd;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
@@ -37,15 +38,18 @@ public class ChangeListenerDialog extends JPanel {
 
 	private static final long serialVersionUID = 72384374L;
 	
+	// Used when an object is created
 	private Map<String, Set<MTggRule>> sourceRHSClassRules = new HashMap<>();
-	// private Map<String, Set<MTggRule>> sourceRHSClassRules = new HashMap<>();
+	// Used when a link is inserted
 	private Map<String, Set<MTggRule>> sourceAssociationRules = new HashMap<>();
-	private Map<String, Set<MTggRule>> attrRules = new HashMap<>();
+	// Used when an attribute is changed
+//	private Map<String, String> attrInvariants = new HashMap<>();
+	private Map<String, String> attrInv = new HashMap<>();
 	
 	private PrintWriter fLogWriter;
 	private Session fSession;
 	private EventBus fEventBus;
-	private boolean running;
+	private boolean running = false;
 	
 	public ChangeListenerDialog(MainWindow parent, Session session) {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -99,19 +103,30 @@ public class ChangeListenerDialog extends JPanel {
 				}
 				ruleSet.add(rule);
 			}
-			List<MObject> newRHSObjs = rule.getSourceRule().getRHS().getObjects();
-			for (MLink corrLink : rule.getCorrRule().getRHS().getLinks()) {
-				for (MObject end : corrLink.linkedObjects()) {
-					if (newRHSObjs.contains(end)) {
-						Set<MTggRule> ruleSet = attrRules.get(end.cls().name());
-						if (ruleSet == null) {
-							ruleSet = new HashSet<MTggRule>();
-							attrRules.put(end.cls().name(), ruleSet);
-						}
-						ruleSet.add(rule);
-					}
-				}
-			}
+//			List<MObject> newRHSObjs = rule.getSourceRule().getRHS().getObjects();
+//			for (MLink corrLink : rule.getCorrRule().getRHS().getLinks()) {
+//				for (MObject end : corrLink.linkedObjects()) {
+//					if (newRHSObjs.contains(end)) {
+//						Set<MTggRule> ruleSet = attrRules.get(end.cls().name());
+//						if (ruleSet == null) {
+//							ruleSet = new HashSet<MTggRule>();
+//							attrRules.put(end.cls().name(), ruleSet);
+//						}
+//						ruleSet.add(rule);
+//					}
+//				}
+//			}
+//			Map<String, Object> invariants = rule.getfInvariants();
+//			for (MObject obj : rule.getCorrRule().getRHS().getObjects()) {
+//				Object inv = invariants.get(obj.cls().name());
+//				if (inv != null) {
+//					String invariant = (String) inv;
+//					if (invariant.startsWith("["))
+//						invariant = invariant.substring(1, invariant.length()-1);
+//					attrInvariants.put(obj.cls().toString(), "!set ".concat(invariant.replace("=", ":=")));
+//				}
+//			}
+
 			/* 
 			List<MObject> rhsObjects = rule.getSourceRule().getRHS().getObjects();
 			Set<MClass> rhsClassesToWatch = lhsObjects.stream().map(o -> o.cls()).collect(Collectors.toSet());
@@ -127,7 +142,7 @@ public class ChangeListenerDialog extends JPanel {
 		}
 		fLogWriter.println("Class - rule mappings: " + sourceRHSClassRules.toString());
 		fLogWriter.println("Association - rule mappings: " + sourceAssociationRules.toString());
-		fLogWriter.println("Attr - rule mappings: " + attrRules.toString());
+//		fLogWriter.println("Attr - rule inv mappings: " + attrInvariants.toString());
 	}
 	
 	@Subscribe
@@ -135,8 +150,8 @@ public class ChangeListenerDialog extends JPanel {
 		if (!running) {
 			MObject obj = e.getCreatedObject();
 			Set<MTggRule> matchedRules = sourceRHSClassRules.get(obj.cls().name());
-			fLogWriter.println(String.format("Object %s:%s created. Rules %s matched.", obj.name(), obj.cls().name(), matchedRules.toString()));
 			if (matchedRules != null) {
+				fLogWriter.println(String.format("Object %s:%s created. Rules %s matched.", obj.name(), obj.cls().name(), matchedRules.toString()));
 				incrementalTransform(matchedRules);
 			}
 		}
@@ -149,6 +164,42 @@ public class ChangeListenerDialog extends JPanel {
 	
 	@Subscribe
     public void onAttributeAssignment(AttributeAssignedEvent e) {
+		if (!running) {
+			running = true;
+			String objName = e.getObject().name();
+			String cmd = attrInv.get(objName);
+			if (cmd != null) {
+				Shell.getInstance().processLineSafely(cmd);
+			}
+			fEventBus.post(new MatchEvent(false));
+//			running = true;
+//			fLogWriter.println("========================= not running ========================");
+//			MObject obj = e.getObject();
+//			for (MAssociation ass : obj.cls().allAssociations()) {
+//				fLogWriter.println("================= 1 ==============");
+//				String corrClsName = ass.navigableEndsFrom(obj.cls()).get(0).cls().name();
+//				String inv = attrInvariants.get(corrClsName);
+//				if (inv != null) {
+//					fLogWriter.println("================= 2 ==============");
+//					for (MLink link : fSession.system().state().linksOfAssociation(ass).links()) {
+//						fLogWriter.println("================= 3 ==============");
+//						if (link.linkedObjects().contains(obj)) {
+//							fLogWriter.println("jfajdfljflajfklasdjf");
+//							for (MObject obj1 : link.linkedObjects()) {
+//								if (obj1.cls().name().equals(corrClsName)) {
+//									inv = inv.replaceAll("self", obj1.name());
+//									fLogWriter.println(String.format("Update mapped attribute: %s", inv));
+//									Shell.getInstance().processLineSafely(inv);
+//								}
+//							}
+//						}
+//					}
+//				}
+//				fLogWriter.println("================= 4 ==============");
+//			}
+//			fLogWriter.println("================= 5 ==============");
+//			running = false;
+		}
 	}
 	
 	@Subscribe
@@ -171,6 +222,26 @@ public class ChangeListenerDialog extends JPanel {
 	@Subscribe
 	public void onMatchEvent(MatchEvent e) {
 		running = e.isRunning();
+		fLogWriter.println("Running: " + Boolean.toString(running));
+	}
+	
+	@Subscribe
+	public void onTransformationPerformed(PerformedTransformation tran) {
+		fLogWriter.println("Right to Corr: " + tran.getRightToCorr().toString());
+		fLogWriter.println("Param to Obj: " + tran.getParamToObj().toString());
+		fLogWriter.println("Corr to OCL: " + tran.getCorrToOcl().toString());
+		fLogWriter.println("Target to Param: " + tran.getSourceToParam().toString());
+		for (String objName : tran.getSourceToParam().keySet()) {
+			String corrParam = tran.getCorrFromRight(tran.getParamFromSource(objName));
+			if (corrParam != null) {
+				String corrObj = tran.getObjFromParam(corrParam);
+				String corrOcl = tran.getCorrOcl(corrParam);
+				if (corrObj != null && corrOcl != null) {
+					attrInv.put(objName, corrOcl.replace(RTLKeyword.self, corrObj));
+				}
+			}
+		}
+		fLogWriter.println("Attr inv: " + attrInv.toString());
 	}
 	
 	private void incrementalTransform(Set<MTggRule> possibleRules) {
