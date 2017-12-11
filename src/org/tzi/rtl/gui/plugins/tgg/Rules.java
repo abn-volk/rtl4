@@ -2,7 +2,6 @@ package org.tzi.rtl.gui.plugins.tgg;
 
 
 
-import java.beans.PropertyVetoException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -16,7 +15,6 @@ import org.tzi.use.gui.main.ViewFrame;
 public class Rules {
 	private static TggRuleCollection fTggRules = new TggRuleCollection();
     private static MainWindow fMainWindow = null;
-    private static ViewFrame fViewFrame = null;
     
     public static TggRuleCollection getTggRuleCollection() { return fTggRules; }
     
@@ -37,26 +35,12 @@ public class Rules {
 		if (fTggRules.getTggRules().size() == 0)
 			JOptionPane.showMessageDialog(fParent, "No rules available.");
 		else {
-			if (fViewFrame == null) {
-				URL url = Rules.class.getResource("/resources/rtl.png");
-				fViewFrame = new ViewFrame("Transformation rules", null, "");
-				fViewFrame.setFrameIcon(new ImageIcon(url));
-				fViewFrame.setContentPane(new RTLRuleTree(fTggRules, fMainWindow));
-				fViewFrame.pack();
-				fParent.addNewViewFrame(fViewFrame);
-			}
-			else 
-				fViewFrame.show();
+			URL url = Rules.class.getResource("/resources/rtl.png");
+			ViewFrame fViewFrame = new ViewFrame("Transformation rules", null, "");
+			fViewFrame.setFrameIcon(new ImageIcon(url));
+			fViewFrame.setContentPane(new RTLRuleTree(fTggRules, fMainWindow));
+			fViewFrame.pack();
+			fParent.addNewViewFrame(fViewFrame);	
 		}
 	}
-	
-	public static void closeRuleWindow () {
-		if (fViewFrame != null)
-			try {
-				fViewFrame.setClosed(true);
-			} catch (PropertyVetoException e) {
-				e.printStackTrace();
-			}
-	}
-	
 }

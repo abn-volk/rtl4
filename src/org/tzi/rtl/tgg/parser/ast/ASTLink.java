@@ -1,5 +1,8 @@
 package org.tzi.rtl.tgg.parser.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.runtime.Token;
 import org.tzi.rtl.tgg.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -9,10 +12,6 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@SuppressWarnings("unchecked")
 public class ASTLink {
 	/**
 	 * @uml.property  name="fObject1"
@@ -30,20 +29,18 @@ public class ASTLink {
 	 */
 	Token fAssocName;
 	public ASTLink(Token object1, Token object2, Token assocName) {
-		// TODO Auto-generated constructor stub
 		fObject1 = object1;
 		fObject2 = object2;
 		fAssocName = assocName;
 	}
 
 	public MLink gen(Context ctx) throws SemanticException {
-		// TODO Auto-generated method stub
 		MLink link = null;
 		MSystemState systemState = ctx.systemState();
 		MObject mObject1 = systemState.objectByName(fObject1.getText());
 		MObject mObject2 = systemState.objectByName(fObject2.getText());
 		MAssociation mAssoc = ctx.model().getAssociation(fAssocName.getText());
-		List<MObject> mObjects = new ArrayList();
+		List<MObject> mObjects = new ArrayList<>();
 		mObjects.add(mObject1);
 		mObjects.add(mObject2);
 		try {
@@ -52,7 +49,6 @@ public class ASTLink {
 			}
 			link = systemState.createLink(mAssoc, mObjects, null);
 		} catch (MSystemException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return link;
