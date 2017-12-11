@@ -150,15 +150,16 @@ public class MatchingEachPart extends Matching {
 					if (objs.size() > 0){
 						matchC.clear();
 						findAllMatchForPart(1, 1);
-						// for (Map<String, MObject> fMatchC : matchC) {
-						if (!checkExistInPreviousMatch()){
-							if (checkPreCondition()){
-								// save current match
-								Matching tmp = new MatchingEachPart(this);
-								result.add(tmp);
+						for (Map<String, MObject> fMatchC : matchC) {
+							objectList4LHS.putAll(fMatchC);
+							if (!checkExistInPreviousMatch()){
+								if (checkPreCondition()){
+									// save current match
+									Matching tmp = new MatchingEachPart(this);
+									result.add(tmp);
+								}
 							}
 						}
-						// }
 					}
 					else{
 						if (!checkExistInPreviousMatch()){
